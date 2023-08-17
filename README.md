@@ -30,7 +30,7 @@ Este último paso no es necesario, pero es altamente recomendable. Visual Studio
 6. Busca "python.condaPath" y establece el valor en la ubicación de la instalación de Anaconda. Por ejemplo, "C:\ProgramData\Anaconda3\condabin\conda.exe".
 7. Busca "python.pythonPath" y establece el valor en la ubicación de la instalación de Python en tu entorno Anaconda. Por ejemplo, "C:\ProgramData\Anaconda3\envs\myenv\python.exe".
 
-## Introducción al análisis de datos en Python
+## Introducción al Análisis de Datos en Python
 Este primer modulo esta compuesto por siete sesiones en los que se busca familiazar al estudiante con el uso de Python para el análisis de datos. Se estudiarán los principales paquetes como los son `NumPy`, `pandas`, `matplotlib`, `seaborn`, entre muchos otros.
 
 |              Clase               |                                                                                                         Tópicos                                                                                                         |
@@ -40,7 +40,7 @@ Este primer modulo esta compuesto por siete sesiones en los que se busca familia
 ## Machine Learning para Business Intelligence
 |              Clase               |                                                                                                         Tópicos                                                                                                         |
 |:------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-|  Sesión 1 |  |
+|  Sesión 1. Introducción al Aprendizaje de Máquinas| <ul><li>[Taller 1](). Ejercicios para practicar conceptos básicos de Python: listas, funciones, condicionales, loops, manejo de datos, y visualización.</li> <li>[Taller 1 (Solución)]()</li> <li>[Presentación de ppt]()</li> </ul>  |
 
 *Nota: Este repositorio no reemplaza el curso pues carece de sesiones de clase sincronicas, el contenido audiovisual asincronico, el trabajo en equipo y las retroalimentaciones del equipo docente. No obstante, el material acá consignado es una buena introducción para todo aquel que desee aprender Python*.
 
