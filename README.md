@@ -30,19 +30,34 @@ Este último paso no es necesario, pero es altamente recomendable. Visual Studio
 6. Busca "python.condaPath" y establece el valor en la ubicación de la instalación de Anaconda. Por ejemplo, "C:\ProgramData\Anaconda3\condabin\conda.exe".
 7. Busca "python.pythonPath" y establece el valor en la ubicación de la instalación de Python en tu entorno Anaconda. Por ejemplo, "C:\ProgramData\Anaconda3\envs\myenv\python.exe".
 
-## Introducción al Análisis de Datos en Python
+## Introducción al Análisis de Datos en Python📈
 Este primer modulo esta compuesto por siete sesiones en los que se busca familiazar al estudiante con el uso de Python para el análisis de datos. Se estudiarán los principales paquetes como los son `NumPy`, `pandas`, `matplotlib`, `seaborn`, entre muchos otros.
 
 |              Clase               |                                                                                                         Tópicos                                                                                                         |
 |:------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-|  Sesión 1 |  |
+|  Sesión 1. | <ul> <li>[]()</li>  <li>[]()</li> </ul>  |
+|  Sesión 2. | <ul> <li>[]()</li>  <li>[]()</li> </ul>  |
+|  Sesión 3. | <ul> <li>[]()</li>  <li>[]()</li> </ul>  |
+|  Sesión 4. | <ul> <li>[]()</li>  <li>[]()</li> </ul>  |
+|  Sesión 5. | <ul> <li>[]()</li>  <li>[]()</li> </ul>  |
+|  Sesión 6. | <ul> <li>[]()</li>  <li>[]()</li> </ul>  |
+|  Sesión 7. | <ul> <li>[]()</li>  <li>[]()</li> </ul>  |
 
-## Machine Learning para Business Intelligence
+## Machine Learning para Business Intelligence🤖
 |              Clase               |                                                                                                         Tópicos                                                                                                         |
 |:------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-|  Sesión 1. Introducción al Aprendizaje de Máquinas| <ul> <li>[Presentación de ppt](https://github.com/lgomezt/Intro_Python/blob/main/Machine%20Learning%20para%20Business%20intelligence/Clase%201/Contexto%20del%20ML.pptx)</li>  <li>[Taller 1](https://github.com/lgomezt/Intro_Python/blob/main/Machine%20Learning%20para%20Business%20intelligence/Clase%201/Scripts/Taller%201.ipynb). Ejercicios para practicar conceptos básicos de Python: listas, funciones, condicionales, loops, manejo de datos, y visualización.</li> <li>[Taller 1 (Solución)](https://github.com/lgomezt/Intro_Python/blob/main/Machine%20Learning%20para%20Business%20intelligence/Clase%201/Scripts/Taller%201%20(Soluci%C3%B3n).ipynb)</li> </ul>  |
+|  Sesión 1. Introducción al Aprendizaje de Máquinas <ul> <li>¿Qué es el Machine Learning? ¿Qué es la Inteligencia Artificial? ¿Cuál es la diferencia entre ambos conceptos? </li> <li>¿Cuáles son las diferentes ramas de Machine Learning? ¿Cuáles vamos a aprender en el curso?</li> <li>¿Cuáles son los tipos de problemas que vamos a resolver en el curso?</li> <li>Contexto histórico: ¿Estamos ante una Cuarta Revolución Industrial?</li> <li>Fronteras y dilemas éticos del Machine Learning</li></ul> | <ul> <li>[Presentación de ppt](https://github.com/lgomezt/Intro_Python/blob/main/Machine%20Learning%20para%20Business%20intelligence/Clase%201/Contexto%20del%20ML.pptx)</li>  <li>[Taller 1](https://github.com/lgomezt/Intro_Python/blob/main/Machine%20Learning%20para%20Business%20intelligence/Clase%201/Scripts/Taller%201.ipynb). Ejercicios para practicar conceptos básicos de Python: listas, funciones, condicionales, loops, manejo de datos, y visualización.</li> <li>[Taller 1 (Solución)](https://github.com/lgomezt/Intro_Python/blob/main/Machine%20Learning%20para%20Business%20intelligence/Clase%201/Scripts/Taller%201%20(Soluci%C3%B3n).ipynb)</li> </ul>  |
+|  Sesión 2. Introducción a la estructura de datos. <ul> <li>Estadísticas descriptivas</li>  <li>Construcción de variables</li> <li>¿Cómo lidiar con valores faltantes?</li> <li>Visualizaciones</li> </ul> | <ul> <li>[Presentación de ppt](https://github.com/lgomezt/Intro_Python/blob/main/Machine%20Learning%20para%20Business%20intelligence/Clase%202/Bases%20de%20datos.pptx)</li>  <li>[Notebook](https://github.com/lgomezt/Intro_Python/blob/main/Machine%20Learning%20para%20Business%20intelligence/Clase%202/Script/2.%20Datos%20y%20visualizaci%C3%B3n.ipynb)</li>  </ul>  |
+|  Sesión 3. | <ul> <li>[]()</li>  <li>[]()</li> </ul>  |
+|  Sesión 4. | <ul> <li>[]()</li>  <li>[]()</li> </ul>  |
+|  Sesión 5. | <ul> <li>[]()</li>  <li>[]()</li> </ul>  |
+|  Sesión 6. | <ul> <li>[]()</li>  <li>[]()</li> </ul>  |
+|  Sesión 7. | <ul> <li>[]()</li>  <li>[]()</li> </ul>  |
+|  Sesión 8. | <ul> <li>[]()</li>  <li>[]()</li> </ul>  |
+|  Sesión 9. | <ul> <li>[]()</li>  <li>[]()</li> </ul>  |
 
-## Agradecimientos
+
+## Agradecimientos🫂
 El material acá consignado ha sido el esfuerzo colaborativo de varias generaciones de [Quantileros](https://quantil.co/es/). Esta sección se le quiere hacer una mención especial a Julian Chitiva y a Juan Sebastian Moreno por la estructuración de gran parte del material del curso.
 
 *Nota: Este repositorio no reemplaza el curso pues carece de sesiones de clase sincronicas, el contenido audiovisual asincronico, el trabajo en equipo y las retroalimentaciones del equipo docente. No obstante, el material acá consignado es una buena introducción para todo aquel que desee aprender Python*.
