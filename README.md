@@ -42,6 +42,9 @@ Este primer modulo esta compuesto por siete sesiones en los que se busca familia
 |:------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
 |  Sesión 1. Introducción al Aprendizaje de Máquinas| <ul> <li>[Presentación de ppt](https://github.com/lgomezt/Intro_Python/blob/main/Machine%20Learning%20para%20Business%20intelligence/Clase%201/Contexto%20del%20ML.pptx)</li>  <li>[Taller 1](https://github.com/lgomezt/Intro_Python/blob/main/Machine%20Learning%20para%20Business%20intelligence/Clase%201/Scripts/Taller%201.ipynb). Ejercicios para practicar conceptos básicos de Python: listas, funciones, condicionales, loops, manejo de datos, y visualización.</li> <li>[Taller 1 (Solución)](https://github.com/lgomezt/Intro_Python/blob/main/Machine%20Learning%20para%20Business%20intelligence/Clase%201/Scripts/Taller%201%20(Soluci%C3%B3n).ipynb)</li> </ul>  |
 
+## Agradecimientos
+El material acá consignado ha sido el esfuerzo colaborativo de varias generaciones de [Quantileros](https://quantil.co/es/). Esta sección se le quiere hacer una mención especial a Julian Chitiva y a Juan Sebastian Moreno por la estructuración de gran parte del material del curso.
+
 *Nota: Este repositorio no reemplaza el curso pues carece de sesiones de clase sincronicas, el contenido audiovisual asincronico, el trabajo en equipo y las retroalimentaciones del equipo docente. No obstante, el material acá consignado es una buena introducción para todo aquel que desee aprender Python*.
 
 
