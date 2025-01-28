@@ -158,6 +158,21 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+
+# Data
+Introducción al Análisis de Datos en Python/Modulo 2. Pandas/Datos
+Introducción al Análisis de Datos en Python/Modulo 3. Visualización/Datos
+Introducción al Análisis de Datos en Python/Modulo 5. Análisis Espacial/datos
+Introducción al Análisis de Datos en Python/Clase 7/Datos
+Introducción al Análisis de Datos en Python/Clase 6/Datos
+*.csv
+*.xlsx
+*.xls
+
+
+# S
 Introducción al Análisis de Datos en Python/Modulo 1. Fundamentos/Scripts/Ejercicios 4. Recursividad difícil/Solución_.ipynb
+Introducción al Análisis de Datos en Python/Modulo 1. Fundamentos/Scripts/Ejercicios 3. Recursividad (Solución).ipynb
 Introducción al Análisis de Datos en Python/Modulo 2. Pandas/Taller 2/Taller 2 (Solucion).ipynb
 Introducción al Análisis de Datos en Python/Modulo 4. Webscraping/Taller 3/Taller 3 (Solución).ipynb
+Introducción al Análisis de Datos en Python/Modulo 1. Fundamentos/Taller 1/Taller 1 - Solución.ipynb
