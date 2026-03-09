@@ -9,7 +9,7 @@ load_dotenv()
 
 client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 
-MODEL_NAME = "gemini-3-pro-preview"
+MODEL_NAME = "gemini-3.1-pro-preview"
 
 # Generation defaults
 DEFAULT_THINKING_BUDGET = -1  # Unlimited for generation tasks

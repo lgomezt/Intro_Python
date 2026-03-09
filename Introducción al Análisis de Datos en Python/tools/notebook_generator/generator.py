@@ -80,6 +80,33 @@ def _clean_json_response(text: str) -> str:
     return text.strip()
 
 
+def _fix_invalid_json_escapes(text: str) -> str:
+    """Fix invalid JSON escape sequences (e.g. \\L from LaTeX \\log).
+
+    Only called as a fallback when json.loads fails with a decode error.
+    Valid JSON escapes: \\\" \\\\ \\/ \\b \\f \\n \\r \\t \\uXXXX
+    Any other \\X is replaced with \\\\X (double-escaped).
+    """
+    import re
+
+    def _fix(m: re.Match) -> str:
+        char = m.group(1)
+        if char in ('"', "\\", "/", "b", "f", "n", "r", "t", "u"):
+            return m.group(0)
+        return "\\\\" + char
+
+    return re.sub(r"\\(.)", _fix, text)
+
+
+def _safe_json_loads(text: str):
+    """Parse JSON, retrying with escape-fix on failure."""
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        fixed = _fix_invalid_json_escapes(text)
+        return json.loads(fixed)
+
+
 # ---------------------------------------------------------------------------
 # Interview
 # ---------------------------------------------------------------------------
@@ -98,7 +125,7 @@ def generate_interview_questions(goal: str, context_text: str) -> List[str]:
         "Generate interview questions.",
         temperature=0.5,
     )
-    return json.loads(_clean_json_response(response))
+    return _safe_json_loads(_clean_json_response(response))
 
 
 # ---------------------------------------------------------------------------
@@ -133,7 +160,7 @@ def generate_blueprint(
         "Generate the notebook blueprint.",
         temperature=0.4,
     )
-    data = json.loads(_clean_json_response(response))
+    data = _safe_json_loads(_clean_json_response(response))
     return Blueprint(**data)
 
 
@@ -160,7 +187,7 @@ def modify_blueprint(blueprint: Blueprint, user_feedback: str) -> Blueprint:
     )
 
     response = _call_llm(system_prompt, user_prompt, temperature=0.4)
-    data = json.loads(_clean_json_response(response))
+    data = _safe_json_loads(_clean_json_response(response))
     return Blueprint(**data)
 
 
@@ -214,7 +241,7 @@ def generate_part(
         temperature=0.3,
     )
 
-    cells_data = json.loads(_clean_json_response(response))
+    cells_data = _safe_json_loads(_clean_json_response(response))
     return [NotebookCell(**c) for c in cells_data]
 
 
