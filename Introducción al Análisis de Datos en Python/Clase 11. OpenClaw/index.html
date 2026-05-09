@@ -1,0 +1,1000 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Clase 11 · Instalar OpenClaw</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --ink: #14140f;
+    --muted: #6b6b63;
+    --line: #e6e3da;
+    --card: #ffffff;
+    --accent: #2b4a3e;
+    --accent-soft: #e7efea;
+    --code-bg: #14140f;
+    --code-ink: #f3f1ea;
+    --warn-bg: #fdf6e3;
+    --warn-ink: #6a5200;
+    --ok: #2b4a3e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14140f;
+      --ink: #f3f1ea;
+      --muted: #9b988e;
+      --line: #2a2a23;
+      --card: #1c1c16;
+      --accent: #9bcfb8;
+      --accent-soft: #1f2a25;
+      --code-bg: #0a0a07;
+      --code-ink: #d6d3c8;
+      --warn-bg: #2a230f;
+      --warn-ink: #e2c970;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Inter", "Segoe UI", Roboto, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 56px 24px 120px; }
+  header.hero { margin-bottom: 56px; }
+  .hero-row { display: flex; align-items: flex-start; gap: 22px; }
+  .hero-logo { flex-shrink: 0; width: 56px; height: 56px; margin-top: 4px; }
+  @media (max-width: 480px) {
+    .hero-row { flex-direction: column; gap: 12px; }
+    .hero-logo { width: 44px; height: 44px; }
+  }
+  .eyebrow {
+    text-transform: uppercase; letter-spacing: 0.14em; font-size: 12px;
+    color: var(--muted); margin-bottom: 16px;
+  }
+  h1 {
+    font-size: clamp(32px, 5vw, 44px); line-height: 1.1; margin: 0 0 16px;
+    letter-spacing: -0.02em; font-weight: 600;
+  }
+  h2 {
+    font-size: 22px; margin: 56px 0 12px; letter-spacing: -0.01em; font-weight: 600;
+    scroll-margin-top: 24px;
+  }
+  h3 { font-size: 16px; margin: 28px 0 8px; font-weight: 600; }
+  p, li { color: var(--ink); }
+  p { margin: 12px 0; }
+  .lede { font-size: 18px; color: var(--muted); max-width: 60ch; }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  .muted { color: var(--muted); }
+  hr { border: 0; border-top: 1px solid var(--line); margin: 48px 0; }
+
+  /* progress bar */
+  .progress {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--bg);
+    padding: 12px 0 10px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 32px;
+    backdrop-filter: blur(6px);
+  }
+  .progress-row {
+    display: flex; gap: 10px; align-items: center; justify-content: space-between;
+  }
+  .progress-track {
+    flex: 1; height: 4px; background: var(--line); border-radius: 2px; overflow: hidden;
+  }
+  .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width .2s; }
+  .progress-label { font-size: 12px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .progress-reset {
+    appearance: none; background: transparent; border: 0; cursor: pointer;
+    font-size: 12px; color: var(--muted); padding: 0; text-decoration: underline;
+  }
+
+  /* OS tabs */
+  .os-tabs {
+    display: inline-flex; gap: 4px; padding: 4px; background: var(--card);
+    border: 1px solid var(--line); border-radius: 999px; margin-bottom: 8px;
+  }
+  .os-tab {
+    appearance: none; cursor: pointer; border: 0; background: transparent;
+    padding: 6px 14px; font: inherit; font-size: 13px;
+    border-radius: 999px; color: var(--muted);
+  }
+  .os-tab.active { background: var(--accent); color: #fff; }
+  .os-tab svg { width: 12px; height: 12px; vertical-align: -1px; margin-right: 6px; opacity: 0.85; }
+  .os-only { display: none; }
+  body[data-os="mac"] .os-only.mac,
+  body[data-os="win"] .os-only.win { display: block; }
+
+  /* step card */
+  .step {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 24px 26px; margin: 20px 0;
+  }
+  .step-head {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 8px;
+  }
+  .step-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600; color: var(--accent);
+    background: var(--accent-soft);
+    flex-shrink: 0;
+  }
+  .step h2 { margin: 0; font-size: 19px; }
+  .step.done .step-num { background: var(--accent); color: #fff; }
+  .step.done .step-num::before { content: "✓"; }
+  .step.done .step-num span { display: none; }
+  .step-check {
+    margin-top: 16px; display: flex; gap: 8px; align-items: center;
+    font-size: 14px; color: var(--muted); cursor: pointer; user-select: none;
+  }
+  .step-check input { accent-color: var(--accent); width: 16px; height: 16px; }
+
+  /* code blocks */
+  pre {
+    background: var(--code-bg); color: var(--code-ink);
+    padding: 14px 16px; border-radius: 10px; overflow-x: auto;
+    font: 13.5px/1.55 ui-monospace, "JetBrains Mono", Menlo, monospace;
+    position: relative; margin: 12px 0;
+  }
+  pre code { white-space: pre; }
+  .copy {
+    position: absolute; top: 8px; right: 8px;
+    appearance: none; background: rgba(255,255,255,0.08); color: var(--code-ink);
+    border: 1px solid rgba(255,255,255,0.12); cursor: pointer;
+    font: 11px ui-monospace, monospace; padding: 4px 8px; border-radius: 6px;
+    opacity: 0; transition: opacity .15s;
+  }
+  pre:hover .copy { opacity: 1; }
+  .copy.copied { color: #9bcfb8; }
+  code.inline {
+    font: 13px ui-monospace, "JetBrains Mono", Menlo, monospace;
+    background: var(--accent-soft); padding: 1px 6px; border-radius: 4px;
+  }
+
+  /* callouts */
+  .note, .warn {
+    border: 1px solid var(--line); border-radius: 10px;
+    padding: 14px 16px; margin: 16px 0; font-size: 14.5px;
+  }
+  .note { background: var(--accent-soft); border-color: transparent; }
+  .warn { background: var(--warn-bg); border-color: transparent; color: var(--warn-ink); }
+  .note strong, .warn strong { display: block; font-size: 12px; text-transform: uppercase;
+    letter-spacing: 0.1em; margin-bottom: 6px; }
+
+  /* details */
+  details {
+    border: 1px solid var(--line); border-radius: 10px; padding: 0; margin: 12px 0;
+    background: var(--card);
+  }
+  details summary {
+    padding: 12px 16px; cursor: pointer; font-size: 14.5px; font-weight: 500;
+    list-style: none; display: flex; justify-content: space-between; align-items: center;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::after { content: "+"; color: var(--muted); font-size: 18px; }
+  details[open] summary::after { content: "−"; }
+  details > *:not(summary) { padding: 0 16px 16px; }
+
+  /* lists */
+  ul.tight, ol.tight { padding-left: 22px; }
+  ul.tight li, ol.tight li { margin: 6px 0; }
+
+  /* table of contents */
+  nav.toc { font-size: 14px; color: var(--muted); margin: 0 0 8px; }
+  nav.toc a { color: var(--muted); text-decoration: none; margin-right: 14px; }
+  nav.toc a:hover { color: var(--accent); }
+
+  /* sources */
+  .sources { font-size: 13.5px; color: var(--muted); }
+  .sources a { color: var(--muted); }
+  .sources li { margin: 4px 0; }
+
+  /* fine print */
+  footer { margin-top: 80px; padding-top: 32px; border-top: 1px solid var(--line);
+    font-size: 13px; color: var(--muted); }
+
+  /* concept diagram (boca/manos/cerebro) */
+  .concept-diagram {
+    display: flex; gap: 12px; justify-content: space-between;
+    margin: 20px 0 8px; padding: 18px 4px;
+    border-top: 1px dashed var(--line); border-bottom: 1px dashed var(--line);
+  }
+  .concept-node {
+    flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .concept-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--accent-soft); color: var(--accent);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .concept-icon svg { width: 18px; height: 18px; }
+  .concept-label { font-size: 13px; font-weight: 600; }
+  .concept-sub { font-size: 11.5px; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+  @media (max-width: 480px) {
+    .concept-diagram { flex-direction: column; gap: 14px; }
+  }
+
+  /* workspace file list */
+  ul.files { list-style: none; padding: 0; margin: 12px 0; }
+  ul.files li {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 10px 0; border-bottom: 1px solid var(--line);
+  }
+  ul.files li:last-child { border-bottom: 0; }
+  .file-icon {
+    flex-shrink: 0; width: 28px; height: 28px; border-radius: 6px;
+    background: var(--accent-soft); color: var(--accent);
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-top: 1px;
+  }
+  .file-icon svg { width: 14px; height: 14px; }
+  .file-name { font: 13px ui-monospace, "JetBrains Mono", Menlo, monospace;
+    color: var(--ink); display: block; margin-bottom: 2px; }
+  .file-desc { font-size: 14.5px; color: var(--muted); }
+</style>
+</head>
+<body data-os="mac">
+
+<div class="wrap">
+
+  <div class="progress" aria-label="Progreso">
+    <div class="progress-row">
+      <div class="progress-track"><div class="progress-fill" id="pfill"></div></div>
+      <span class="progress-label" id="plabel">0 / 9</span>
+      <button class="progress-reset" id="preset" type="button">Reiniciar</button>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="hero-row">
+      <svg class="hero-logo" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="OpenClaw">
+        <defs>
+          <linearGradient id="lobster-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ff4d4d"/>
+            <stop offset="100%" stop-color="#991b1b"/>
+          </linearGradient>
+        </defs>
+        <path d="M60 10 C30 10 15 35 15 55 C15 75 30 95 45 100 L45 110 L55 110 L55 100 C55 100 60 102 65 100 L65 110 L75 110 L75 100 C90 95 105 75 105 55 C105 35 90 10 60 10Z" fill="url(#lobster-gradient)"/>
+        <path d="M20 45 C5 40 0 50 5 60 C10 70 20 65 25 55 C28 48 25 45 20 45Z" fill="url(#lobster-gradient)"/>
+        <path d="M100 45 C115 40 120 50 115 60 C110 70 100 65 95 55 C92 48 95 45 100 45Z" fill="url(#lobster-gradient)"/>
+        <path d="M45 15 Q35 5 30 8" stroke="#ff4d4d" stroke-width="3" stroke-linecap="round"/>
+        <path d="M75 15 Q85 5 90 8" stroke="#ff4d4d" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="45" cy="35" r="6" fill="#050810"/>
+        <circle cx="75" cy="35" r="6" fill="#050810"/>
+        <circle cx="46" cy="34" r="2.5" fill="#00e5cc"/>
+        <circle cx="76" cy="34" r="2.5" fill="#00e5cc"/>
+      </svg>
+      <div>
+        <div class="eyebrow">Clase 11 · Introducción al Análisis de Datos en Python</div>
+        <h1>Instalar OpenClaw, paso a paso</h1>
+        <p class="lede">
+          Una guía mínima para configurar tu primer asistente personal de IA local,
+          conectarlo a OpenRouter y prepararlo para hablar por WhatsApp.
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <nav class="toc">
+    <a href="#que-es">¿Qué es?</a>
+    <a href="#seguridad">Seguridad</a>
+    <a href="#prereqs">Requisitos</a>
+    <a href="#pasos">Pasos</a>
+    <a href="#alma">Configuración</a>
+    <a href="#servidor">Servidor</a>
+  </nav>
+
+  <h2 id="que-es">¿Qué es OpenClaw?</h2>
+  <p>
+    OpenClaw es un asistente personal de IA, de código abierto, que se ejecuta en
+    <em>tu propia computadora</em>. Su sitio oficial lo describe como
+    <q>The AI that actually does things</q>: lee correos, agenda eventos, hace check-in en vuelos
+    y conversa con vos a través de aplicaciones de mensajería como WhatsApp, Telegram o Discord.
+  </p>
+  <p>
+    A diferencia de un chatbot web, OpenClaw vive como un proceso (<em>gateway</em>) en tu PC.
+    Recibe mensajes desde tus apps de chat, los procesa con un modelo de lenguaje
+    (que vos elegís) y ejecuta acciones en herramientas reales.
+  </p>
+
+  <h3>¿Por qué es útil para esta clase?</h3>
+  <ul class="tight">
+    <li>Es un caso real de <strong>integración</strong> entre datos, APIs y modelos LLM.</li>
+    <li>Permite ver de cerca cómo se diseña un agente que <em>hace cosas</em>, no solo responde.</li>
+    <li>Lo configuramos en local, así que no pagamos hosting y mantenemos el control.</li>
+  </ul>
+
+  <h2 id="seguridad">Concepto clave: «local» y seguridad</h2>
+  <p>
+    Cuando decimos <strong>deploy local</strong> queremos decir que el servicio corre dentro
+    de tu computadora: tu máquina es el servidor. Los archivos de configuración, las claves
+    y el historial viven en una carpeta tuya (<code class="inline">~/.openclaw/</code>).
+    Si apagás la PC, el asistente se apaga.
+  </p>
+  <div class="note">
+    <strong>Lo que dice la documentación oficial</strong>
+    OpenClaw <em>no</em> está diseñado como una frontera de seguridad multi-tenant para
+    múltiples usuarios adversarios. Asume <em>un operador confiable por gateway</em>: vos.
+    El gateway por defecto escucha solo en <code class="inline">loopback</code> (no expuesto a internet)
+    y exige autenticación.
+  </div>
+  <h3>Implicancias prácticas para vos</h3>
+  <ul class="tight">
+    <li>Las claves de API que cargues quedan en tu disco. Tratá la PC con la misma seriedad que tratarías un .env de producción.</li>
+    <li>Permisos sugeridos: directorios <code class="inline">700</code>, archivos <code class="inline">600</code>.</li>
+    <li>Si alguna vez exponés el gateway fuera de tu máquina, agregá autenticación por token y firewall.</li>
+    <li>Usá <code class="inline">openclaw doctor</code> y la opción de auditoría de seguridad antes de conectar canales sensibles.</li>
+  </ul>
+
+  <h2 id="prereqs">Antes de empezar</h2>
+  <p>Lo único obligatorio según la documentación oficial:</p>
+  <ul class="tight">
+    <li><strong>Node.js 24</strong> recomendado, o como mínimo Node 22.16+.</li>
+    <li><strong>Sistema operativo:</strong> macOS, Linux o Windows (nativo o WSL2).</li>
+    <li>En macOS, la app de escritorio (opcional) requiere <strong>macOS 15+</strong>.</li>
+  </ul>
+
+  <p>Elegí tu sistema operativo. Toda la guía se adapta a tu elección:</p>
+  <div class="os-tabs" role="tablist" aria-label="Sistema operativo">
+    <button class="os-tab active" data-os="mac" role="tab">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.365 1.43c0 1.14-.493 2.27-1.177 3.08-.744.9-1.99 1.57-2.987 1.57-.12-1.03.396-2.09 1.04-2.81.74-.84 1.97-1.4 3.124-1.84zM21.5 17.5c-.605 1.4-.886 2.03-1.66 3.27-1.07 1.7-2.58 3.83-4.46 3.84-1.67.02-2.1-1.09-4.37-1.07-2.27.02-2.74 1.09-4.41 1.07-1.88-.02-3.31-1.93-4.38-3.63C-.86 17.13-1.13 11.61 1.5 8.4c1.86-2.28 4.81-3.61 7.58-3.61 2.83 0 4.6 1.55 6.94 1.55 2.27 0 3.65-1.55 6.92-1.55 2.47 0 5.08 1.34 6.93 3.65-6.09 3.34-5.1 12.06-2.37 9.06z"/></svg>
+      macOS
+    </button>
+    <button class="os-tab" data-os="win" role="tab">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M0 3.45L9.7 2.16v9.36H0V3.45zm10.7-1.4L24 0v11.5H10.7V2.05zM0 12.5h9.7v9.36L0 20.55V12.5zm10.7 0H24V24l-13.3-1.95V12.5z"/></svg>
+      Windows
+    </button>
+  </div>
+
+  <h3>Instalar Node.js</h3>
+  <p>
+    <strong>¿Qué es Node?</strong> Pensalo como el «intérprete de Python» pero para
+    JavaScript. Cuando vos escribís un script <code class="inline">.py</code>, lo corrés con
+    <code class="inline">python script.py</code>: Python es el motor que ejecuta el código.
+    Node.js cumple exactamente el mismo rol con archivos <code class="inline">.js</code>:
+    es lo que permite que un programa escrito en JavaScript se ejecute en tu computadora,
+    fuera de un navegador.
+  </p>
+  <p>
+    <strong>¿Por qué lo necesitamos?</strong> OpenClaw está escrito en JavaScript/TypeScript
+    y se distribuye como un paquete de <code class="inline">npm</code> (el equivalente de
+    <code class="inline">pip</code> en Python). Sin Node, tu computadora no sabe cómo ejecutar
+    OpenClaw, igual que sin Python no podrías correr <code class="inline">pandas</code>.
+  </p>
+  <p>
+    Lo descargamos del sitio oficial: <a href="https://nodejs.org/en/download" target="_blank" rel="noopener">nodejs.org/en/download</a>.
+    Nunca instales Node desde sitios no oficiales — es un programa que va a poder ejecutar código en tu PC, así que la fuente importa.
+  </p>
+  <div class="note">
+    <strong>Equivalencias rápidas con Python</strong>
+    <ul class="tight" style="margin: 6px 0 0;">
+      <li><code class="inline">python</code> ⇄ <code class="inline">node</code> (el motor)</li>
+      <li><code class="inline">pip install paquete</code> ⇄ <code class="inline">npm install paquete</code></li>
+      <li><code class="inline">requirements.txt</code> ⇄ <code class="inline">package.json</code></li>
+      <li><code class="inline">venv</code> ⇄ no aplica directo: cada proyecto tiene su <code class="inline">node_modules/</code></li>
+    </ul>
+  </div>
+
+  <div class="os-only mac">
+    <ol class="tight">
+      <li>Entrá a <a href="https://nodejs.org/en/download" target="_blank" rel="noopener">nodejs.org/en/download</a>.</li>
+      <li>Elegí <strong>macOS Installer (.pkg)</strong>, versión <strong>LTS</strong> (la que dice 24.x).</li>
+      <li>Abrí el <code class="inline">.pkg</code> descargado y seguí los pasos del instalador.</li>
+    </ol>
+    <p>Cuando termine, abrí la <strong>Terminal</strong> y verificá:</p>
+<pre><code>node --version
+npm --version</code><button class="copy">Copiar</button></pre>
+    <p class="muted">Tienen que devolver dos números de versión (algo como <code class="inline">v24.x.x</code> y <code class="inline">10.x.x</code>). Si dice <code class="inline">command not found</code>, cerrá y volvé a abrir la Terminal.</p>
+  </div>
+
+  <div class="os-only win">
+    <ol class="tight">
+      <li>Entrá a <a href="https://nodejs.org/en/download" target="_blank" rel="noopener">nodejs.org/en/download</a>.</li>
+      <li>Elegí <strong>Windows Installer (.msi)</strong>, versión <strong>LTS</strong>, arquitectura <strong>x64</strong> (o ARM64 si tenés un Surface con chip ARM).</li>
+      <li>Abrí el <code class="inline">.msi</code> y aceptá los valores por defecto. Asegurate de dejar marcada la opción <em>«Add to PATH»</em>.</li>
+    </ol>
+    <p>Abrí <strong>PowerShell</strong> y verificá:</p>
+<pre><code>node --version
+npm --version</code><button class="copy">Copiar</button></pre>
+    <p class="muted">Tienen que devolver dos números de versión. Si PowerShell dice que el comando no existe, <strong>cerrá y volvé a abrir</strong> la ventana: el PATH se actualiza solo después de reabrirla.</p>
+  </div>
+
+  <details>
+    <summary>¿Ya tenés Node, pero quizá viejo?</summary>
+    <p>Verificá que sea 22.16 o superior:</p>
+<pre><code>node --version</code><button class="copy">Copiar</button></pre>
+    <p>
+      Si te aparece algo menor (por ejemplo <code class="inline">v18.x</code> o <code class="inline">v20.x</code>),
+      descargá el LTS desde <a href="https://nodejs.org/en/download" target="_blank" rel="noopener">nodejs.org/en/download</a>
+      e instalalo encima: el instalador se encarga de actualizar.
+    </p>
+  </details>
+
+  <div id="pasos"></div>
+
+  <!-- STEP 1 -->
+  <article class="step" data-step="1">
+    <div class="step-head">
+      <span class="step-num"><span>1</span></span>
+      <h2>Verificar si OpenClaw ya está instalado</h2>
+    </div>
+    <p>Antes de instalar nada, comprobemos el estado actual de tu PC.</p>
+
+    <div class="os-only mac">
+      <p>Abrí la <strong>Terminal</strong> (Cmd + Espacio → escribí <em>Terminal</em>) y pegá:</p>
+      <pre><code>openclaw --version</code><button class="copy">Copiar</button></pre>
+      <p class="muted">Si responde con un número de versión, ya tenés OpenClaw instalado. Si responde
+        <code class="inline">command not found</code>, no está instalado y podés saltar al paso 2.</p>
+    </div>
+
+    <div class="os-only win">
+      <p>Abrí <strong>PowerShell</strong> (tecla Windows → escribí <em>PowerShell</em>) y pegá:</p>
+      <pre><code>openclaw --version</code><button class="copy">Copiar</button></pre>
+      <p class="muted">Si te aparece <code class="inline">CommandNotFoundException</code> o
+        <code class="inline">no se reconoce como un comando</code>, no está instalado: avanzá al paso 2.</p>
+    </div>
+
+    <details>
+      <summary>Si dice que sí está instalado: ¿reinstalar desde cero?</summary>
+      <p>
+        Si querés empezar limpio (recomendado para esta clase, así todos partimos del mismo estado),
+        usá el desinstalador oficial:
+      </p>
+      <pre><code>openclaw uninstall</code><button class="copy">Copiar</button></pre>
+      <p>Versión no interactiva (responde sí a todo):</p>
+      <pre><code>openclaw uninstall --all --yes --non-interactive</code><button class="copy">Copiar</button></pre>
+
+      <h3>Si el comando ni siquiera existe pero sospechás que quedaron restos</h3>
+      <div class="os-only mac">
+        <p>Eliminar el demonio (gateway) y archivos de estado:</p>
+<pre><code>launchctl bootout gui/$UID/ai.openclaw.gateway
+rm -f ~/Library/LaunchAgents/ai.openclaw.gateway.plist
+rm -rf "${OPENCLAW_STATE_DIR:-$HOME/.openclaw}"
+rm -rf /Applications/OpenClaw.app
+npm rm -g openclaw 2&gt;/dev/null || true</code><button class="copy">Copiar</button></pre>
+      </div>
+      <div class="os-only win">
+        <p>En PowerShell, eliminar tarea programada y archivos de estado:</p>
+<pre><code>schtasks /Delete /F /TN "OpenClaw Gateway"
+Remove-Item -Force "$env:USERPROFILE\.openclaw\gateway.cmd"
+Remove-Item -Recurse -Force "$env:USERPROFILE\.openclaw"
+npm rm -g openclaw</code><button class="copy">Copiar</button></pre>
+      </div>
+    </details>
+
+    <label class="step-check"><input type="checkbox" /> Verifiqué el estado y, si hacía falta, desinstalé</label>
+  </article>
+
+  <!-- STEP 2 -->
+  <article class="step" data-step="2">
+    <div class="step-head">
+      <span class="step-num"><span>2</span></span>
+      <h2>Instalar OpenClaw</h2>
+    </div>
+
+    <div class="os-only mac">
+      <p>Comando oficial, una sola línea, en la Terminal:</p>
+      <pre><code>curl -fsSL https://openclaw.ai/install.sh | bash</code><button class="copy">Copiar</button></pre>
+      <p class="muted">El script detecta tu OS, instala Node si falta, instala el CLI y lanza el onboarding.</p>
+    </div>
+
+    <div class="os-only win">
+      <p>Comando oficial, una sola línea, en PowerShell:</p>
+      <pre><code>iwr -useb https://openclaw.ai/install.ps1 | iex</code><button class="copy">Copiar</button></pre>
+      <p class="muted">El script detecta el OS, instala Node si falta, instala el CLI y arranca el onboarding.</p>
+      <div class="warn">
+        <strong>Importante en Windows</strong>
+        Si más adelante vas a conectar WhatsApp, asegurate de tener Git instalado y en el PATH:
+        <pre style="margin-top:8px"><code>winget install --id Git.Git -e</code><button class="copy">Copiar</button></pre>
+      </div>
+    </div>
+
+    <details>
+      <summary>Alternativa con npm (si preferís el flujo manual)</summary>
+      <pre><code>npm install -g openclaw@latest
+openclaw onboard --install-daemon</code><button class="copy">Copiar</button></pre>
+      <p class="muted">Funciona igual en macOS y Windows.</p>
+    </details>
+
+    <label class="step-check"><input type="checkbox" /> Instalé OpenClaw</label>
+  </article>
+
+  <!-- STEP 3 -->
+  <article class="step" data-step="3">
+    <div class="step-head">
+      <span class="step-num"><span>3</span></span>
+      <h2>Verificar que la instalación funciona</h2>
+    </div>
+    <p>Tres comandos rápidos para confirmar que todo está sano:</p>
+<pre><code>openclaw --version
+openclaw doctor
+openclaw gateway status</code><button class="copy">Copiar</button></pre>
+    <ul class="tight">
+      <li><code class="inline">--version</code> confirma que el CLI está disponible.</li>
+      <li><code class="inline">doctor</code> revisa la configuración y avisa de problemas.</li>
+      <li><code class="inline">gateway status</code> verifica que el demonio esté corriendo.</li>
+    </ul>
+    <label class="step-check"><input type="checkbox" /> Los tres comandos respondieron sin errores graves</label>
+  </article>
+
+  <!-- STEP 4 -->
+  <article class="step" data-step="4">
+    <div class="step-head">
+      <span class="step-num"><span>4</span></span>
+      <h2>Crear cuenta en OpenRouter y conseguir API key</h2>
+    </div>
+    <p>
+      Para esta clase usamos <a href="https://openrouter.ai" target="_blank" rel="noopener">OpenRouter</a> como
+      proveedor de modelos. OpenRouter es un único punto de acceso a decenas de LLMs (DeepSeek, Google,
+      OpenAI, Anthropic, etc.). Pagás solo por lo que consumís.
+    </p>
+    <ol class="tight">
+      <li>Entrá a <a href="https://openrouter.ai" target="_blank" rel="noopener">openrouter.ai</a> y creá una cuenta (Google o GitHub funcionan bien).</li>
+      <li>En el menú de tu usuario buscá <strong>Credits</strong> y cargá <strong>USD 5</strong>. Va a alcanzar de sobra para la clase.</li>
+      <li>Andá a <strong>Keys</strong> y creá una <em>API key</em> nueva. Copiala ahora: empieza con <code class="inline">sk-or-...</code>.</li>
+    </ol>
+    <div class="warn">
+      <strong>Cuidado con la clave</strong>
+      Tratá esa key como tu contraseña. No la pegues en chats, ni en repos públicos, ni en capturas que vayas a compartir.
+    </div>
+    <label class="step-check"><input type="checkbox" /> Tengo mi API key de OpenRouter copiada</label>
+  </article>
+
+  <!-- STEP 5 -->
+  <article class="step" data-step="5">
+    <div class="step-head">
+      <span class="step-num"><span>5</span></span>
+      <h2>Conectar OpenClaw a OpenRouter</h2>
+    </div>
+    <p>El flujo guiado de onboarding lo hace solo:</p>
+    <pre><code>openclaw onboard --auth-choice openrouter-api-key</code><button class="copy">Copiar</button></pre>
+    <p>Te va a pedir la key. Pegala cuando lo solicite.</p>
+
+    <details>
+      <summary>Configurar la key sin pasar por el wizard</summary>
+      <p>Definir la variable de entorno (recomendado, evita pegarla en archivos):</p>
+      <div class="os-only mac">
+<pre><code>export OPENROUTER_API_KEY="sk-or-tu-key-aqui"</code><button class="copy">Copiar</button></pre>
+        <p class="muted">Para que persista, agregalo a <code class="inline">~/.zshrc</code>.</p>
+      </div>
+      <div class="os-only win">
+<pre><code>setx OPENROUTER_API_KEY "sk-or-tu-key-aqui"</code><button class="copy">Copiar</button></pre>
+        <p class="muted">Cerrá y abrí PowerShell para que tome el valor nuevo.</p>
+      </div>
+    </details>
+
+    <label class="step-check"><input type="checkbox" /> OpenClaw ya tiene mi key de OpenRouter</label>
+  </article>
+
+  <!-- STEP 6 -->
+  <article class="step" data-step="6">
+    <div class="step-head">
+      <span class="step-num"><span>6</span></span>
+      <h2>Elegir los modelos para la clase</h2>
+    </div>
+    <p>
+      OpenClaw usa el formato <code class="inline">openrouter/&lt;proveedor&gt;/&lt;modelo&gt;</code>.
+      Para esta clase vamos a trabajar con dos:
+    </p>
+    <ul class="tight">
+      <li><code class="inline">openrouter/deepseek/deepseek-v4-pro</code> — modelo grande, fuerte en razonamiento y código.</li>
+      <li><code class="inline">openrouter/google/gemma-4-31b-it</code> — modelo abierto de Google, soporta imagen y video.</li>
+    </ul>
+    <p>Configuralos como modelo activo del agente con:</p>
+<pre><code>openclaw models set openrouter/deepseek/deepseek-v4-pro</code><button class="copy">Copiar</button></pre>
+    <p>Si querés probar el otro:</p>
+<pre><code>openclaw models set openrouter/google/gemma-4-31b-it</code><button class="copy">Copiar</button></pre>
+    <p class="muted">Si preferís que OpenRouter elija automáticamente, podés usar <code class="inline">openrouter/auto</code>.</p>
+
+    <label class="step-check"><input type="checkbox" /> Definí el modelo activo</label>
+  </article>
+
+  <!-- STEP 7 -->
+  <article class="step" data-step="7">
+    <div class="step-head">
+      <span class="step-num"><span>7</span></span>
+      <h2>Conectar WhatsApp</h2>
+    </div>
+    <p>El plugin oficial se instala así:</p>
+<pre><code>openclaw plugins install @openclaw/whatsapp</code><button class="copy">Copiar</button></pre>
+
+    <p>Configurá quién puede escribirle al asistente. Editá tu <code class="inline">openclaw.json</code>:</p>
+<pre><code>{
+  "channels": {
+    "whatsapp": {
+      "dmPolicy": "allowlist",
+      "allowFrom": ["+5491155555555"],
+      "groupPolicy": "disabled"
+    }
+  }
+}</code><button class="copy">Copiar</button></pre>
+    <p class="muted">Reemplazá el número por el tuyo en formato E.164. <code class="inline">"disabled"</code> en grupos
+      es lo más conservador para empezar.</p>
+
+    <p>Vinculá tu cuenta de WhatsApp escaneando un QR:</p>
+<pre><code>openclaw channels login --channel whatsapp</code><button class="copy">Copiar</button></pre>
+
+    <p>Levantá el gateway:</p>
+<pre><code>openclaw gateway</code><button class="copy">Copiar</button></pre>
+
+    <details>
+      <summary>Comandos útiles para diagnosticar</summary>
+<pre><code>openclaw channels status
+openclaw logs --follow
+openclaw doctor
+openclaw channels logout --channel whatsapp</code><button class="copy">Copiar</button></pre>
+    </details>
+
+    <div class="note">
+      <strong>Recomendación</strong>
+      Usá un <em>número dedicado</em> para tu asistente (un chip aparte o WhatsApp Business). Así separás
+      tu vida personal del bot y evitás problemas con los Términos de WhatsApp.
+    </div>
+
+    <label class="step-check"><input type="checkbox" /> Le mandé un mensaje al asistente y me respondió</label>
+  </article>
+
+  <!-- STEP 8 -->
+  <article class="step" data-step="8">
+    <div class="step-head">
+      <span class="step-num"><span>8</span></span>
+      <h2>Agregar Gmail y Google Calendar (skill <code class="inline">gog</code>)</h2>
+    </div>
+
+    <h3>Antes: ¿qué es una <em>skill</em>?</h3>
+    <p>
+      OpenClaw tiene tres conceptos que conviene no confundir:
+    </p>
+    <ul class="tight">
+      <li>
+        <strong>Canal (channel)</strong> — <em>por dónde te habla</em> el asistente.
+        Ejemplos: WhatsApp, Telegram, Discord. Lo configuramos en el paso 7.
+      </li>
+      <li>
+        <strong>Plugin</strong> — un paquete que extiende OpenClaw. Suele agregar canales
+        nuevos o paquetes de skills. El plugin de WhatsApp del paso 7 es un ejemplo.
+      </li>
+      <li>
+        <strong>Skill</strong> — <em>qué sabe hacer</em> el agente.
+        Una skill es básicamente un manual de instrucciones que le enseña al modelo
+        cómo usar una herramienta concreta. Cada skill es una carpeta con un archivo
+        <code class="inline">SKILL.md</code> que describe sus capacidades.
+      </li>
+    </ul>
+    <p class="muted">
+      Resumen mental: el canal es la <em>boca</em>, las skills son las <em>manos</em>,
+      el modelo (OpenRouter) es el <em>cerebro</em>.
+    </p>
+
+    <div class="concept-diagram" aria-hidden="true">
+      <div class="concept-node">
+        <span class="concept-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11a3 3 0 0 0 6 0V6a3 3 0 1 0-6 0Z"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><path d="M12 18v3"/></svg>
+        </span>
+        <span class="concept-label">Canal</span>
+        <span class="concept-sub">La boca</span>
+      </div>
+      <div class="concept-node">
+        <span class="concept-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>
+        </span>
+        <span class="concept-label">Modelo</span>
+        <span class="concept-sub">El cerebro</span>
+      </div>
+      <div class="concept-node">
+        <span class="concept-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 11V5a2 2 0 1 0-4 0v6"/><path d="M10 11V3a2 2 0 1 0-4 0v9"/><path d="M6 12V7a2 2 0 1 0-4 0v8a8 8 0 0 0 8 8h2a6 6 0 0 0 6-6V8a2 2 0 1 0-4 0v3"/></svg>
+        </span>
+        <span class="concept-label">Skills</span>
+        <span class="concept-sub">Las manos</span>
+      </div>
+    </div>
+
+    <h3>La skill que vamos a usar: <code class="inline">gog</code></h3>
+    <p>
+      <a href="https://clawhub.ai/steipete/gog" target="_blank" rel="noopener">gog</a>
+      es una skill publicada en ClawHub que cubre <strong>todo Google Workspace</strong> de una vez:
+      Gmail, Calendar, Drive, Contacts, Sheets y Docs. Una sola skill, una sola autorización OAuth,
+      y queda todo conectado.
+    </p>
+
+    <p>Instalala:</p>
+<pre><code>openclaw skills install gog</code><button class="copy">Copiar</button></pre>
+
+    <h3>Autorizar tu cuenta de Google</h3>
+    <p>El proceso tiene tres comandos. Necesitás un archivo <code class="inline">client_secret.json</code> de Google Cloud (la skill explica cómo generarlo en su README):</p>
+<pre><code>gog auth credentials /ruta/a/client_secret.json
+gog auth add tu-email@gmail.com --services gmail,calendar,drive,contacts,sheets,docs
+gog auth list</code><button class="copy">Copiar</button></pre>
+
+    <p>Para evitar pasar tu cuenta en cada comando, exportá una variable:</p>
+    <div class="os-only mac">
+<pre><code>export GOG_ACCOUNT=tu-email@gmail.com</code><button class="copy">Copiar</button></pre>
+    </div>
+    <div class="os-only win">
+<pre><code>setx GOG_ACCOUNT "tu-email@gmail.com"</code><button class="copy">Copiar</button></pre>
+    </div>
+
+    <h3>Probar que funciona</h3>
+    <p>Algunos comandos rápidos para verificar:</p>
+<pre><code>gog gmail search "newer_than:7d" --max 10
+gog calendar events primary --from 2026-05-09T00:00:00Z --to 2026-05-16T00:00:00Z</code><button class="copy">Copiar</button></pre>
+
+    <div class="note">
+      <strong>Una pausa de seguridad</strong>
+      <code class="inline">gog</code> pide confirmación antes de mandar correos o crear eventos.
+      Eso es a propósito: cuando un agente tiene acceso real a tu Gmail, querés un freno humano
+      antes de que mande algo a tu jefe por error.
+    </div>
+
+    <label class="step-check"><input type="checkbox" /> La skill <code class="inline">gog</code> está instalada y autorizada</label>
+  </article>
+
+  <!-- STEP 9 -->
+  <article class="step" data-step="9">
+    <div class="step-head">
+      <span class="step-num"><span>9</span></span>
+      <h2>Probar el asistente de punta a punta</h2>
+    </div>
+    <p>Mandale por WhatsApp algo que cruce dos integraciones, por ejemplo:</p>
+    <pre><code>"Resumime los mails sin leer de hoy y agendá una reunión con Lucas el viernes a las 10am."</code><button class="copy">Copiar</button></pre>
+    <p>Si responde con un resumen y crea el evento, el setup está completo.</p>
+    <label class="step-check"><input type="checkbox" /> Funciona end-to-end</label>
+  </article>
+
+  <hr />
+
+  <h2 id="alma">El alma del agente: cómo se configura</h2>
+  <p>
+    Hasta acá tu asistente funciona, pero todavía no tiene <em>personalidad</em> ni
+    sabe nada de vos. Eso vive en una carpeta especial llamada <strong>workspace</strong>.
+  </p>
+
+  <h3>Dos carpetas, no una</h3>
+  <p>OpenClaw separa configuración técnica de personalidad:</p>
+  <ul class="tight">
+    <li>
+      <code class="inline">~/.openclaw/</code> — configuración del sistema, credenciales y estado.
+      Contiene <code class="inline">openclaw.json</code> y los tokens de OAuth.
+      <strong>Nunca</strong> subas esto a un repo público.
+    </li>
+    <li>
+      <code class="inline">~/.openclaw/workspace/</code> — la «memoria viva» de tu agente.
+      Acá vive su personalidad, sus instrucciones y su memoria del día a día.
+    </li>
+  </ul>
+
+  <h3>Los archivos clave del workspace</h3>
+  <p>Todos son <code class="inline">.md</code> (Markdown), texto plano legible:</p>
+  <ul class="files">
+    <li>
+      <span class="file-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </span>
+      <span>
+        <span class="file-name">SOUL.md</span>
+        <span class="file-desc">La voz del agente. Tono, opiniones, qué evita decir, cuán formal o informal es. Se carga al inicio de cada sesión. <em>Corto le gana a largo. Filoso le gana a vago.</em></span>
+      </span>
+    </li>
+    <li>
+      <span class="file-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+      </span>
+      <span>
+        <span class="file-name">AGENTS.md</span>
+        <span class="file-desc">Instrucciones operativas: cómo usar la memoria, qué hacer en cada tipo de pedido, reglas de comportamiento.</span>
+      </span>
+    </li>
+    <li>
+      <span class="file-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </span>
+      <span>
+        <span class="file-name">USER.md</span>
+        <span class="file-desc">Quién sos vos: nombre, cómo te gusta que te hablen, contexto que el agente debería recordar siempre.</span>
+      </span>
+    </li>
+    <li>
+      <span class="file-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M15 8h2M15 12h2M5 16h14"/></svg>
+      </span>
+      <span>
+        <span class="file-name">IDENTITY.md</span>
+        <span class="file-desc">El nombre del agente, su «vibe», hasta su emoji. Se crea automáticamente la primera vez.</span>
+      </span>
+    </li>
+    <li>
+      <span class="file-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      </span>
+      <span>
+        <span class="file-name">TOOLS.md</span>
+        <span class="file-desc">Notas sobre convenciones locales para herramientas (orientativo).</span>
+      </span>
+    </li>
+    <li>
+      <span class="file-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      </span>
+      <span>
+        <span class="file-name">memory/AAAA-MM-DD.md</span>
+        <span class="file-desc">Un archivo por día con lo que pasó. Es la memoria de corto plazo del agente.</span>
+      </span>
+    </li>
+    <li>
+      <span class="file-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      </span>
+      <span>
+        <span class="file-name">skills/</span>
+        <span class="file-desc">Skills propias de este workspace (tienen prioridad sobre las globales).</span>
+      </span>
+    </li>
+  </ul>
+
+  <div class="note">
+    <strong>Regla de oro: dejá que el agente se edite a sí mismo</strong>
+    Aunque podrías abrir <code class="inline">SOUL.md</code> en VS Code y modificarlo a mano,
+    <strong>no lo hagas todavía</strong>. La forma correcta es <em>pedírselo al agente</em>:
+    <em>«Acordate que prefiero respuestas cortas y técnicas, sin emojis»</em> y él mismo
+    actualiza el archivo. Hace dos cosas valiosas: (1) mantiene el formato consistente,
+    y (2) te enseña cómo «piensa» sobre su propia configuración.
+  </div>
+
+  <h3>Cómo se ve esto en la práctica</h3>
+  <p>Probá estos pedidos por WhatsApp después de instalar todo:</p>
+<pre><code>"Soy Lucas, profe de Python. Cuando te pida algo de la clase contestame en español neutro."
+"De ahora en más, evitá ofrecer ayuda extra al final de cada respuesta."
+"Mi cumple es 14 de marzo, agendate eso."</code><button class="copy">Copiar</button></pre>
+  <p class="muted">
+    El agente va a actualizar <code class="inline">USER.md</code> y/o <code class="inline">SOUL.md</code> automáticamente.
+    Podés mirar los archivos después para ver qué cambió: es la mejor forma de entender el sistema.
+  </p>
+
+  <div class="warn">
+    <strong>Backup recomendado</strong>
+    Tratá tu <code class="inline">workspace/</code> como memoria privada. La documentación oficial
+    sugiere ponerlo en un repo de Git <em>privado</em> para tener backup. Pero
+    <strong>nunca</strong> incluyas <code class="inline">openclaw.json</code> ni los archivos de credenciales:
+    contienen secretos.
+  </div>
+
+  <h2 id="servidor">Más allá de local: deploy en un servidor</h2>
+  <p>
+    Correr OpenClaw en tu PC tiene un costo: si la apagás, el asistente deja de responder. Para uso 24/7
+    se suele migrar a un servidor dedicado. Eso queda <em>fuera del alcance</em> de esta clase, pero la
+    documentación oficial lista los caminos posibles:
+  </p>
+  <ul class="tight">
+    <li><strong>Docker</strong> — la opción más portable; un solo contenedor con el gateway.</li>
+    <li><strong>Kubernetes</strong> — si ya tenés un cluster, hay manifiestos oficiales.</li>
+    <li><strong>Node.js bare-metal</strong> — instalar como servicio en una VM.</li>
+    <li><strong>Raspberry Pi</strong> — la opción «hobby», ideal para uso personal.</li>
+  </ul>
+  <p>
+    Cuando llegue ese momento vas a tener que pensar en: certificados TLS, autenticación del gateway por
+    token, backups del directorio <code class="inline">~/.openclaw/</code>, y reglas de firewall para no
+    exponer cosas que deberían quedar privadas.
+  </p>
+
+  <h2>¿Qué viene en la próxima clase?</h2>
+  <p>
+    Con la base instalada, el próximo paso es <strong>diseñar agentes con capacidades específicas</strong>:
+    decidir qué herramientas pueden usar, qué información tienen permitido leer, y cómo escribimos los
+    <em>prompts</em> que les dan personalidad. Vamos a construir un agente que combine los cuatro bloques
+    de hoy: OpenRouter como cerebro, WhatsApp como interfaz, y Gmail + Calendar como manos.
+  </p>
+
+  <h2>Fuentes</h2>
+  <ul class="sources tight">
+    <li><a href="https://openclaw.ai" target="_blank" rel="noopener">openclaw.ai</a> — sitio oficial.</li>
+    <li><a href="https://docs.openclaw.ai/install" target="_blank" rel="noopener">docs.openclaw.ai/install</a> — guía oficial de instalación.</li>
+    <li><a href="https://docs.openclaw.ai/install/uninstall" target="_blank" rel="noopener">docs.openclaw.ai/install/uninstall</a> — instrucciones de desinstalación.</li>
+    <li><a href="https://docs.openclaw.ai/providers/openrouter" target="_blank" rel="noopener">docs.openclaw.ai/providers/openrouter</a> — integración con OpenRouter.</li>
+    <li><a href="https://docs.openclaw.ai/channels/whatsapp" target="_blank" rel="noopener">docs.openclaw.ai/channels/whatsapp</a> — canal WhatsApp.</li>
+    <li><a href="https://docs.openclaw.ai/gateway/security/" target="_blank" rel="noopener">docs.openclaw.ai/gateway/security</a> — modelo de seguridad.</li>
+    <li><a href="https://docs.openclaw.ai/plugins/manage-plugins" target="_blank" rel="noopener">docs.openclaw.ai/plugins/manage-plugins</a> — plugins y ClawHub.</li>
+    <li><a href="https://docs.openclaw.ai/tools/skills" target="_blank" rel="noopener">docs.openclaw.ai/tools/skills</a> — qué son las skills.</li>
+    <li><a href="https://clawhub.ai/steipete/gog" target="_blank" rel="noopener">clawhub.ai/steipete/gog</a> — la skill <code class="inline">gog</code> (Google Workspace).</li>
+    <li><a href="https://docs.openclaw.ai/concepts/agent-workspace" target="_blank" rel="noopener">docs.openclaw.ai/concepts/agent-workspace</a> — estructura del workspace y archivos.</li>
+    <li><a href="https://docs.openclaw.ai/concepts/soul" target="_blank" rel="noopener">docs.openclaw.ai/concepts/soul</a> — el archivo SOUL.md.</li>
+    <li><a href="https://openrouter.ai/deepseek/deepseek-v4-pro" target="_blank" rel="noopener">openrouter.ai/deepseek/deepseek-v4-pro</a> — modelo DeepSeek V4 Pro.</li>
+    <li><a href="https://openrouter.ai/google/gemma-4-31b-it" target="_blank" rel="noopener">openrouter.ai/google/gemma-4-31b-it</a> — modelo Gemma 4 31B.</li>
+  </ul>
+
+  <footer>
+    <p>Clase 11 · Introducción al Análisis de Datos en Python · Tu progreso se guarda solo en este navegador.</p>
+  </footer>
+
+</div>
+
+<script>
+  // OS tab switcher
+  const tabs = document.querySelectorAll('.os-tab');
+  const setOS = (os) => {
+    document.body.dataset.os = os;
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.os === os));
+    localStorage.setItem('openclaw-os', os);
+  };
+  tabs.forEach(t => t.addEventListener('click', () => setOS(t.dataset.os)));
+  const savedOS = localStorage.getItem('openclaw-os');
+  if (savedOS) setOS(savedOS);
+
+  // Copy buttons
+  document.querySelectorAll('pre').forEach(pre => {
+    let btn = pre.querySelector('.copy');
+    if (!btn) {
+      btn = document.createElement('button');
+      btn.className = 'copy';
+      btn.textContent = 'Copiar';
+      pre.appendChild(btn);
+    }
+    btn.addEventListener('click', async () => {
+      const code = pre.querySelector('code').innerText;
+      try {
+        await navigator.clipboard.writeText(code);
+        btn.textContent = 'Copiado';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('copied'); }, 1400);
+      } catch (e) {
+        btn.textContent = 'Error';
+      }
+    });
+  });
+
+  // Step progress (per-checkbox, persisted)
+  const steps = document.querySelectorAll('.step');
+  const fill = document.getElementById('pfill');
+  const label = document.getElementById('plabel');
+  const KEY = 'openclaw-progress-v1';
+
+  const loadState = () => {
+    try { return JSON.parse(localStorage.getItem(KEY) || '{}'); }
+    catch { return {}; }
+  };
+  const saveState = (s) => localStorage.setItem(KEY, JSON.stringify(s));
+
+  let state = loadState();
+
+  const refresh = () => {
+    let done = 0;
+    steps.forEach(step => {
+      const id = step.dataset.step;
+      const cb = step.querySelector('.step-check input');
+      const checked = !!state[id];
+      cb.checked = checked;
+      step.classList.toggle('done', checked);
+      if (checked) done++;
+    });
+    const total = steps.length;
+    fill.style.width = (done / total * 100) + '%';
+    label.textContent = done + ' / ' + total;
+  };
+
+  steps.forEach(step => {
+    const id = step.dataset.step;
+    const cb = step.querySelector('.step-check input');
+    cb.addEventListener('change', () => {
+      state[id] = cb.checked;
+      saveState(state);
+      refresh();
+    });
+  });
+
+  document.getElementById('preset').addEventListener('click', () => {
+    if (!confirm('¿Reiniciar el progreso?')) return;
+    state = {};
+    saveState(state);
+    refresh();
+  });
+
+  refresh();
+</script>
+
+</body>
+</html>
