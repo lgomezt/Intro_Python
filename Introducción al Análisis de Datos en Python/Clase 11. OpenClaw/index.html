@@ -155,6 +155,13 @@
     font: 13px ui-monospace, "JetBrains Mono", Menlo, monospace;
     background: var(--accent-soft); padding: 1px 6px; border-radius: 4px;
   }
+  kbd {
+    font: 12px ui-sans-serif, -apple-system, sans-serif;
+    background: var(--card); border: 1px solid var(--line);
+    border-bottom-width: 2px; border-radius: 4px;
+    padding: 1px 6px; margin: 0 1px;
+    color: var(--ink);
+  }
 
   /* callouts */
   .note, .warn {
@@ -381,10 +388,43 @@
   </div>
 
   <div class="os-only mac">
+    <h4 style="margin: 18px 0 6px; font-size: 14px;">Antes de descargar: ¿qué chip tiene tu Mac?</h4>
+    <p>
+      Hay dos familias de Macs y se descarga un instalador <strong>distinto</strong> para cada una:
+    </p>
+    <ul class="tight">
+      <li><strong>Apple Silicon</strong> — chips M1, M2, M3, M4. Todos los Macs nuevos desde fines de 2020.</li>
+      <li><strong>Intel</strong> — Macs anteriores a 2020 (y algunos modelos vendidos hasta 2022).</li>
+    </ul>
+    <p>Para saber cuál tenés, hacé cualquiera de estas dos cosas:</p>
+    <ol class="tight">
+      <li>
+        <strong>Por interfaz:</strong> menú <kbd>Apple</kbd> (arriba a la izquierda) →
+        <em>«Acerca de este Mac»</em>. Vas a ver una de estas dos líneas:
+        <ul class="tight" style="margin-top: 4px;">
+          <li><em>Chip:</em> <code class="inline">Apple M1</code> / <code class="inline">M2</code> / <code class="inline">M3</code> / <code class="inline">M4</code> → es <strong>Apple Silicon</strong>.</li>
+          <li><em>Procesador:</em> <code class="inline">Intel Core ...</code> → es <strong>Intel</strong>.</li>
+        </ul>
+      </li>
+      <li>
+        <strong>Por terminal:</strong> abrí la Terminal y ejecutá:
+<pre><code>uname -m</code><button class="copy">Copiar</button></pre>
+        Si responde <code class="inline">arm64</code> → Apple Silicon. Si responde <code class="inline">x86_64</code> → Intel.
+      </li>
+    </ol>
+
+    <h4 style="margin: 18px 0 6px; font-size: 14px;">Descargar e instalar</h4>
     <ol class="tight">
       <li>Entrá a <a href="https://nodejs.org/en/download" target="_blank" rel="noopener">nodejs.org/en/download</a>.</li>
-      <li>Elegí <strong>macOS Installer (.pkg)</strong>, versión <strong>LTS</strong> (la que dice 24.x).</li>
-      <li>Abrí el <code class="inline">.pkg</code> descargado y seguí los pasos del instalador.</li>
+      <li>
+        Elegí versión <strong>LTS</strong> (la que dice 24.x), formato <strong>macOS Installer (.pkg)</strong>,
+        y la arquitectura correcta:
+        <ul class="tight" style="margin-top: 4px;">
+          <li>Apple Silicon → <strong>ARM64</strong></li>
+          <li>Intel → <strong>x64</strong></li>
+        </ul>
+      </li>
+      <li>Abrí el <code class="inline">.pkg</code> y seguí los pasos del instalador.</li>
     </ol>
     <p>Cuando termine, abrí la <strong>Terminal</strong> y verificá:</p>
 <pre><code>node --version
@@ -393,9 +433,36 @@ npm --version</code><button class="copy">Copiar</button></pre>
   </div>
 
   <div class="os-only win">
+    <h4 style="margin: 18px 0 6px; font-size: 14px;">Antes de descargar: ¿qué arquitectura tiene tu PC?</h4>
+    <p>
+      Casi todas las PCs Windows son <strong>x64</strong> (Intel o AMD), pero los modelos modernos
+      tipo Surface Pro X / Surface Pro 9 con chip ARM, y algunos laptops nuevos con Snapdragon, son <strong>ARM64</strong>.
+      Necesitás el instalador correcto.
+    </p>
+    <p>Para saberlo:</p>
+    <ol class="tight">
+      <li>
+        <strong>Por interfaz:</strong> presioná <kbd>Win</kbd> + <kbd>I</kbd> →
+        <em>Sistema</em> → <em>Información</em>. Buscá la línea <em>«Tipo de sistema»</em>:
+        <ul class="tight" style="margin-top: 4px;">
+          <li><code class="inline">PC basado en x64</code> → es <strong>x64</strong> (lo más común).</li>
+          <li><code class="inline">PC basado en ARM</code> → es <strong>ARM64</strong>.</li>
+        </ul>
+      </li>
+      <li>
+        <strong>Por PowerShell:</strong>
+<pre><code>echo $env:PROCESSOR_ARCHITECTURE</code><button class="copy">Copiar</button></pre>
+        Si responde <code class="inline">AMD64</code> → x64. Si responde <code class="inline">ARM64</code> → ARM.
+      </li>
+    </ol>
+
+    <h4 style="margin: 18px 0 6px; font-size: 14px;">Descargar e instalar</h4>
     <ol class="tight">
       <li>Entrá a <a href="https://nodejs.org/en/download" target="_blank" rel="noopener">nodejs.org/en/download</a>.</li>
-      <li>Elegí <strong>Windows Installer (.msi)</strong>, versión <strong>LTS</strong>, arquitectura <strong>x64</strong> (o ARM64 si tenés un Surface con chip ARM).</li>
+      <li>
+        Elegí versión <strong>LTS</strong>, formato <strong>Windows Installer (.msi)</strong>,
+        arquitectura <strong>x64</strong> o <strong>ARM64</strong> según lo que averiguaste.
+      </li>
       <li>Abrí el <code class="inline">.msi</code> y aceptá los valores por defecto. Asegurate de dejar marcada la opción <em>«Add to PATH»</em>.</li>
     </ol>
     <p>Abrí <strong>PowerShell</strong> y verificá:</p>
