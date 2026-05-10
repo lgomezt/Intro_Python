@@ -191,10 +191,218 @@
   ul.tight, ol.tight { padding-left: 22px; }
   ul.tight li, ol.tight li { margin: 6px 0; }
 
-  /* table of contents */
-  nav.toc { font-size: 14px; color: var(--muted); margin: 0 0 8px; }
-  nav.toc a { color: var(--muted); text-decoration: none; margin-right: 14px; }
-  nav.toc a:hover { color: var(--accent); }
+  /* sticky section nav (pills) */
+  .section-nav {
+    position: sticky; top: 38px; z-index: 19;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    margin: 0 -24px 32px;
+    padding: 10px 24px 12px;
+    backdrop-filter: blur(6px);
+  }
+  .section-nav-row {
+    display: flex; gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .section-nav-row::-webkit-scrollbar { display: none; }
+  .section-pill {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: background .12s, color .12s;
+    display: inline-flex; gap: 8px; align-items: center;
+    white-space: nowrap;
+  }
+  .section-pill:hover { color: var(--ink); background: var(--accent-soft); }
+  .section-pill.active { background: var(--accent); color: #fff; }
+  .section-pill .pill-num {
+    font: 10.5px ui-monospace, "JetBrains Mono", Menlo, monospace;
+    opacity: 0.7;
+  }
+  .section-pill.active .pill-num { opacity: 0.9; }
+
+  /* section markers (visual transitions between major topics) */
+  .section-marker {
+    margin: 64px 0 28px;
+    padding: 24px 0 0;
+    border-top: 2px solid var(--accent);
+    scroll-margin-top: 110px;
+    position: relative;
+  }
+  .section-marker::before {
+    content: ""; position: absolute; top: -2px; left: 0;
+    width: 64px; height: 2px; background: var(--accent);
+  }
+  .section-marker .smarker-num {
+    font: 11px ui-monospace, "JetBrains Mono", Menlo, monospace;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 8px; font-weight: 500;
+  }
+  .section-marker .smarker-title {
+    font-size: clamp(24px, 3.5vw, 30px);
+    font-weight: 600; letter-spacing: -0.01em;
+    margin: 0 0 6px; line-height: 1.15;
+  }
+  .section-marker .smarker-desc {
+    color: var(--muted); font-size: 15px;
+    max-width: 60ch; margin: 0;
+  }
+
+  /* command cheatsheet */
+  .cmd-grid {
+    display: grid; grid-template-columns: minmax(160px, auto) 1fr;
+    gap: 0; margin: 16px 0;
+    border: 1px solid var(--line); border-radius: 10px;
+    overflow: hidden;
+  }
+  .cmd-grid > div {
+    padding: 10px 14px; border-bottom: 1px solid var(--line);
+    font-size: 13.5px;
+  }
+  .cmd-grid > div:nth-last-child(-n+2) { border-bottom: 0; }
+  .cmd-grid > div.cmd {
+    font: 13px ui-monospace, "JetBrains Mono", Menlo, monospace;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-right: 1px solid var(--line);
+  }
+  .cmd-grid > div.desc { color: var(--ink); }
+  @media (prefers-color-scheme: dark) {
+    .cmd-grid > div.cmd { background: rgba(155,207,184,0.06); }
+  }
+
+  /* refined prompt block */
+  .prompt-card {
+    border-left: 3px solid var(--accent);
+    background: var(--card);
+    padding: 16px 20px;
+    margin: 16px 0;
+    border-radius: 0 10px 10px 0;
+    font-size: 14px;
+  }
+  .prompt-card .prompt-label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--accent); margin-bottom: 8px; font-weight: 600;
+  }
+
+  /* interactive file tree */
+  .ftree {
+    display: grid;
+    grid-template-columns: minmax(220px, 280px) 1fr;
+    gap: 0;
+    margin: 18px 0;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--card);
+  }
+  .ftree-tree {
+    background: var(--accent-soft);
+    padding: 14px 12px;
+    font: 12.5px ui-monospace, "JetBrains Mono", Menlo, monospace;
+    overflow-x: auto;
+    border-right: 1px solid var(--line);
+  }
+  @media (prefers-color-scheme: dark) {
+    .ftree-tree { background: rgba(155,207,184,0.05); }
+  }
+  .fnode {
+    appearance: none; background: transparent; border: 0; cursor: pointer;
+    padding: 4px 8px; font: inherit; color: var(--ink);
+    border-radius: 6px;
+    width: 100%; text-align: left;
+    display: flex; align-items: center; gap: 8px;
+    transition: background .12s, color .12s;
+  }
+  .fnode:hover { background: rgba(43,74,62,0.08); }
+  .fnode.active { background: var(--accent); color: #fff; }
+  .fnode.active .fnode-tag { color: rgba(255,255,255,0.8); }
+  @media (prefers-color-scheme: dark) {
+    .fnode:hover { background: rgba(155,207,184,0.1); }
+  }
+  .fnode-folder {
+    padding: 6px 8px 2px; color: var(--muted); font-weight: 600;
+    cursor: default;
+  }
+  .fnode-tag {
+    margin-left: auto; font-size: 10px;
+    color: var(--muted); font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .fnode.indent { padding-left: 22px; }
+  .fnode.indent2 { padding-left: 36px; }
+  .ftree-preview {
+    padding: 18px 22px;
+    min-height: 220px;
+  }
+  .fnode-panel { display: none; }
+  .fnode-panel.active { display: block; }
+  .fnode-panel h5 {
+    margin: 0 0 4px; font-size: 16px;
+    font-family: ui-monospace, "JetBrains Mono", Menlo, monospace;
+    color: var(--accent);
+  }
+  .fnode-panel .fnode-role {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--muted); margin-bottom: 12px;
+  }
+  .fnode-panel p { margin: 8px 0; font-size: 14px; }
+  .fnode-panel pre { font-size: 11.5px; margin: 8px 0; }
+  .fnode-panel ul.tight li { font-size: 13.5px; }
+  @media (max-width: 640px) {
+    .ftree { grid-template-columns: 1fr; }
+    .ftree-tree { border-right: 0; border-bottom: 1px solid var(--line); }
+    .ftree-preview { min-height: 180px; }
+  }
+
+  /* narration table with emoji */
+  table.narration {
+    width: 100%; border-collapse: collapse; margin: 14px 0;
+    font-size: 13px;
+  }
+  table.narration th, table.narration td {
+    padding: 8px 12px; text-align: left;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  table.narration th {
+    font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--muted); font-weight: 600;
+  }
+  table.narration td:first-child {
+    white-space: nowrap; font-size: 16px; line-height: 1.2;
+  }
+  table.narration td:nth-child(2) {
+    color: var(--accent); font-weight: 500;
+    width: 28%;
+  }
+  table.narration tr.warn-row td:nth-child(2) { color: #b45309; }
+  @media (prefers-color-scheme: dark) {
+    table.narration tr.warn-row td:nth-child(2) { color: #e2c970; }
+  }
+
+  /* spaced rep table */
+  table.srep {
+    width: 100%; border-collapse: collapse; margin: 14px 0;
+    font-size: 13.5px;
+  }
+  table.srep th, table.srep td {
+    padding: 9px 12px; text-align: left;
+    border-bottom: 1px solid var(--line);
+  }
+  table.srep th {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--muted); font-weight: 600;
+  }
+  table.srep td:first-child {
+    font: 12px ui-monospace, "JetBrains Mono", Menlo, monospace;
+    color: var(--accent); white-space: nowrap;
+  }
 
   /* sources */
   .sources { font-size: 13.5px; color: var(--muted); }
@@ -224,6 +432,93 @@
   .concept-sub { font-size: 11.5px; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
   @media (max-width: 480px) {
     .concept-diagram { flex-direction: column; gap: 14px; }
+  }
+
+  /* file tabs (personalization section) */
+  .file-tabs-strip {
+    display: flex; flex-wrap: wrap; gap: 4px; padding: 4px;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; margin: 16px 0 12px;
+  }
+  .ftab {
+    appearance: none; cursor: pointer; border: 0; background: transparent;
+    padding: 8px 12px; font: inherit; font-size: 13px;
+    border-radius: 8px; color: var(--muted);
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: background .12s, color .12s;
+  }
+  .ftab:hover { color: var(--ink); }
+  .ftab.active { background: var(--accent); color: #fff; }
+  .ftab svg { width: 13px; height: 13px; opacity: 0.85; }
+  .ftab-mono {
+    font: 12px ui-monospace, "JetBrains Mono", Menlo, monospace;
+  }
+  .ftab-panel {
+    display: none;
+    border: 1px solid var(--line); border-radius: 12px;
+    padding: 22px 24px; background: var(--card);
+  }
+  .ftab-panel.active { display: block; }
+  .ftab-panel h4 {
+    font-size: 17px; margin: 0 0 4px;
+    font-family: ui-monospace, "JetBrains Mono", Menlo, monospace;
+    color: var(--accent);
+  }
+  .ftab-panel .ftab-tag {
+    display: inline-block; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--muted); margin-bottom: 14px;
+  }
+  .ftab-panel pre { font-size: 12px; }
+  .ftab-meta {
+    display: flex; gap: 18px; flex-wrap: wrap; margin: 12px 0 14px;
+    font-size: 13px;
+  }
+  .ftab-meta dt {
+    text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.1em;
+    color: var(--muted); margin-bottom: 2px;
+  }
+  .ftab-meta dd { margin: 0; color: var(--ink); }
+  .ftab-meta > div { min-width: 130px; }
+
+  /* context flow diagram */
+  .flow {
+    display: flex; flex-direction: column; align-items: stretch; gap: 10px;
+    margin: 24px 0 8px; padding: 22px 18px;
+    border: 1px solid var(--line); border-radius: 14px;
+    background: var(--bg);
+  }
+  .flow-row { display: flex; gap: 10px; align-items: center; justify-content: center; }
+  .flow-box {
+    flex: 1; max-width: 260px;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 10px; padding: 12px 14px;
+    text-align: center;
+  }
+  .flow-box.accent { background: var(--accent-soft); border-color: transparent; }
+  .flow-box.accent strong { color: var(--accent); }
+  .flow-title { font-weight: 600; font-size: 14px; }
+  .flow-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .flow-arrow {
+    color: var(--muted); display: flex; justify-content: center;
+    font-size: 18px; line-height: 1;
+  }
+  .flow-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+    text-align: left; margin-top: 6px;
+  }
+  .flow-grid span {
+    font: 11px ui-monospace, "JetBrains Mono", Menlo, monospace;
+    color: var(--accent); padding: 2px 6px;
+    background: rgba(43,74,62,0.06);
+    border-radius: 4px;
+  }
+  @media (prefers-color-scheme: dark) {
+    .flow-grid span { background: rgba(155,207,184,0.1); }
+  }
+  @media (max-width: 540px) {
+    .flow-row { flex-direction: column; }
+    .flow-box { max-width: 100%; }
+    .flow-arrow { transform: rotate(90deg); margin: -2px 0; }
   }
 
   /* workspace file list */
@@ -287,16 +582,24 @@
     </div>
   </header>
 
-  <nav class="toc">
-    <a href="#que-es">¿Qué es?</a>
-    <a href="#seguridad">Seguridad</a>
-    <a href="#prereqs">Requisitos</a>
-    <a href="#pasos">Pasos</a>
-    <a href="#alma">Configuración</a>
-    <a href="#servidor">Servidor</a>
+  <nav class="section-nav" aria-label="Secciones">
+    <div class="section-nav-row">
+      <a class="section-pill" href="#sec-intro" data-section="sec-intro"><span class="pill-num">01</span>Intro</a>
+      <a class="section-pill" href="#sec-prereqs" data-section="sec-prereqs"><span class="pill-num">02</span>Pre-requisitos</a>
+      <a class="section-pill" href="#sec-instalacion" data-section="sec-instalacion"><span class="pill-num">03</span>Instalación</a>
+      <a class="section-pill" href="#sec-identidad" data-section="sec-identidad"><span class="pill-num">04</span>Identidad</a>
+      <a class="section-pill" href="#sec-skills" data-section="sec-skills"><span class="pill-num">05</span>Skills</a>
+      <a class="section-pill" href="#sec-mas-alla" data-section="sec-mas-alla"><span class="pill-num">06</span>Más allá</a>
+    </div>
   </nav>
 
-  <h2 id="que-es">¿Qué es OpenClaw?</h2>
+  <div class="section-marker" id="sec-intro">
+    <div class="smarker-num">Sección 01 · Conceptos</div>
+    <h2 class="smarker-title">Introducción</h2>
+    <p class="smarker-desc">Qué es OpenClaw, por qué corre en local y qué cuidados de seguridad implica eso.</p>
+  </div>
+
+  <h2 id="que-es" style="font-size: 22px; margin-top: 28px;">¿Qué es OpenClaw?</h2>
   <p>
     OpenClaw es un asistente personal de IA, de código abierto, que se ejecuta en
     <em>tu propia computadora</em>. Su sitio oficial lo describe como
@@ -338,7 +641,13 @@
     <li>Usá <code class="inline">openclaw doctor</code> y la opción de auditoría de seguridad antes de conectar canales sensibles.</li>
   </ul>
 
-  <h2 id="prereqs">Antes de empezar</h2>
+  <div class="section-marker" id="sec-prereqs">
+    <div class="smarker-num">Sección 02 · Empezando</div>
+    <h2 class="smarker-title">Pre-requisitos</h2>
+    <p class="smarker-desc">Lo que tu computadora necesita tener antes de instalar OpenClaw: Node.js correcto para tu chip o arquitectura.</p>
+  </div>
+
+  <h2 id="prereqs" style="font-size: 22px; margin-top: 28px;">Antes de empezar</h2>
   <p>Lo único obligatorio según la documentación oficial:</p>
   <ul class="tight">
     <li><strong>Node.js 24</strong> recomendado, o como mínimo Node 22.16+.</li>
@@ -482,6 +791,12 @@ npm --version</code><button class="copy">Copiar</button></pre>
     </p>
   </details>
 
+  <div class="section-marker" id="sec-instalacion">
+    <div class="smarker-num">Sección 03 · Manos a la obra</div>
+    <h2 class="smarker-title">Instalación</h2>
+    <p class="smarker-desc">Seis pasos numerados para llegar de cero a un agente que te responde por WhatsApp con Gmail y Calendar conectados.</p>
+  </div>
+
   <div id="pasos"></div>
 
   <!-- STEP 1 -->
@@ -541,64 +856,17 @@ npm rm -g openclaw</code><button class="copy">Copiar</button></pre>
   <article class="step" data-step="2">
     <div class="step-head">
       <span class="step-num"><span>2</span></span>
-      <h2>Instalar OpenClaw</h2>
-    </div>
-
-    <div class="os-only mac">
-      <p>Comando oficial, una sola línea, en la Terminal:</p>
-      <pre><code>curl -fsSL https://openclaw.ai/install.sh | bash</code><button class="copy">Copiar</button></pre>
-      <p class="muted">El script detecta tu OS, instala Node si falta, instala el CLI y lanza el onboarding.</p>
-    </div>
-
-    <div class="os-only win">
-      <p>Comando oficial, una sola línea, en PowerShell:</p>
-      <pre><code>iwr -useb https://openclaw.ai/install.ps1 | iex</code><button class="copy">Copiar</button></pre>
-      <p class="muted">El script detecta el OS, instala Node si falta, instala el CLI y arranca el onboarding.</p>
-      <div class="warn">
-        <strong>Importante en Windows</strong>
-        Si más adelante vas a conectar WhatsApp, asegurate de tener Git instalado y en el PATH:
-        <pre style="margin-top:8px"><code>winget install --id Git.Git -e</code><button class="copy">Copiar</button></pre>
-      </div>
-    </div>
-
-    <details>
-      <summary>Alternativa con npm (si preferís el flujo manual)</summary>
-      <pre><code>npm install -g openclaw@latest
-openclaw onboard --install-daemon</code><button class="copy">Copiar</button></pre>
-      <p class="muted">Funciona igual en macOS y Windows.</p>
-    </details>
-
-    <label class="step-check"><input type="checkbox" /> Instalé OpenClaw</label>
-  </article>
-
-  <!-- STEP 3 -->
-  <article class="step" data-step="3">
-    <div class="step-head">
-      <span class="step-num"><span>3</span></span>
-      <h2>Verificar que la instalación funciona</h2>
-    </div>
-    <p>Tres comandos rápidos para confirmar que todo está sano:</p>
-<pre><code>openclaw --version
-openclaw doctor
-openclaw gateway status</code><button class="copy">Copiar</button></pre>
-    <ul class="tight">
-      <li><code class="inline">--version</code> confirma que el CLI está disponible.</li>
-      <li><code class="inline">doctor</code> revisa la configuración y avisa de problemas.</li>
-      <li><code class="inline">gateway status</code> verifica que el demonio esté corriendo.</li>
-    </ul>
-    <label class="step-check"><input type="checkbox" /> Los tres comandos respondieron sin errores graves</label>
-  </article>
-
-  <!-- STEP 4 -->
-  <article class="step" data-step="4">
-    <div class="step-head">
-      <span class="step-num"><span>4</span></span>
       <h2>Crear cuenta en OpenRouter y conseguir API key</h2>
     </div>
     <p>
+      Hacemos esto <strong>antes</strong> de instalar OpenClaw porque el instalador es interactivo
+      y te va a pedir la key durante la configuración. Tenerla copiada en el portapapeles te ahorra
+      tener que abandonar el wizard a mitad de camino.
+    </p>
+    <p>
       Para esta clase usamos <a href="https://openrouter.ai" target="_blank" rel="noopener">OpenRouter</a> como
-      proveedor de modelos. OpenRouter es un único punto de acceso a decenas de LLMs (DeepSeek, Google,
-      OpenAI, Anthropic, etc.). Pagás solo por lo que consumís.
+      proveedor de modelos: un único punto de acceso a decenas de LLMs (DeepSeek, Google, OpenAI, Anthropic, etc.).
+      Pagás solo por lo que consumís.
     </p>
     <ol class="tight">
       <li>Entrá a <a href="https://openrouter.ai" target="_blank" rel="noopener">openrouter.ai</a> y creá una cuenta (Google o GitHub funcionan bien).</li>
@@ -612,104 +880,186 @@ openclaw gateway status</code><button class="copy">Copiar</button></pre>
     <label class="step-check"><input type="checkbox" /> Tengo mi API key de OpenRouter copiada</label>
   </article>
 
+  <!-- STEP 3 -->
+  <article class="step" data-step="3">
+    <div class="step-head">
+      <span class="step-num"><span>3</span></span>
+      <h2>Ejecutar el instalador y pasar por el wizard</h2>
+    </div>
+
+    <p>El instalador hace tres cosas seguidas, sin que vos tengas que pensar en cada una:</p>
+    <ol class="tight">
+      <li>Detecta tu sistema operativo e instala Node si falta.</li>
+      <li>Instala el paquete <code class="inline">openclaw</code> vía <code class="inline">npm</code>.</li>
+      <li>Arranca un <strong>wizard interactivo</strong> que configura todo el resto.</li>
+    </ol>
+
+    <h3>El comando para arrancar</h3>
+    <div class="os-only mac">
+      <p>En la <strong>Terminal</strong>:</p>
+      <pre><code>curl -fsSL https://openclaw.ai/install.sh | bash</code><button class="copy">Copiar</button></pre>
+    </div>
+    <div class="os-only win">
+      <p>En <strong>PowerShell</strong>:</p>
+      <pre><code>iwr -useb https://openclaw.ai/install.ps1 | iex</code><button class="copy">Copiar</button></pre>
+      <div class="warn">
+        <strong>Importante en Windows</strong>
+        Si vas a conectar WhatsApp (lo vas a hacer en este mismo paso), asegurate antes de tener Git en el PATH:
+        <pre style="margin-top:8px"><code>winget install --id Git.Git -e</code><button class="copy">Copiar</button></pre>
+      </div>
+    </div>
+
+    <h3>El wizard, prompt por prompt</h3>
+    <p>
+      Cuando arranque el wizard vas a ver una serie de menús con cuadritos y opciones.
+      Esto es <strong>exactamente</strong> lo que vas a encontrar y qué responder en cada uno:
+    </p>
+
+    <ol class="tight">
+      <li>
+        <strong>Security disclaimer</strong> — un texto largo recordando que OpenClaw es un agente
+        personal, no una plataforma multi-usuario. <em>«I understand... Continue?»</em> →
+        <code class="inline">Yes</code>.
+      </li>
+      <li>
+        <strong>Setup mode</strong> → <code class="inline">QuickStart</code>
+        (puerto 18789, bind a <code class="inline">127.0.0.1</code>, autenticación por token).
+      </li>
+      <li>
+        <strong>Model/auth provider</strong> → <code class="inline">OpenRouter</code>.
+      </li>
+      <li>
+        <strong>Use existing OPENROUTER_API_KEY?</strong> → <code class="inline">No</code>
+        (a menos que ya la hayas exportado como variable de entorno).
+      </li>
+      <li>
+        <strong>Enter OpenRouter API key</strong> → pegá la <code class="inline">sk-or-...</code>
+        del paso anterior y enter.
+      </li>
+      <li>
+        <strong>Default model</strong> → elegí <code class="inline">Enter model manually</code> y escribí
+        <code class="inline">openrouter/deepseek/deepseek-v4-pro</code>.
+        <p class="muted" style="margin: 4px 0 0;">El otro modelo de la clase (<code class="inline">openrouter/google/gemma-4-31b-it</code>) lo podés cambiar después.</p>
+      </li>
+      <li>
+        <strong>Select channel</strong> → <code class="inline">WhatsApp (QR link)</code>.
+        El plugin <code class="inline">@openclaw/whatsapp</code> se instala solo.
+      </li>
+      <li>
+        <strong>Link WhatsApp now (QR)?</strong> → <code class="inline">Yes</code>. Aparece un QR
+        gigante en la terminal. En tu teléfono: WhatsApp → <em>Dispositivos vinculados</em> →
+        <em>Vincular un dispositivo</em> → escanealo.
+      </li>
+      <li>
+        <strong>WhatsApp phone setup</strong> → <code class="inline">This is my personal phone number</code>.
+      </li>
+      <li>
+        <strong>Your personal WhatsApp number</strong> → escribí tu número en formato
+        <strong>E.164</strong>: <code class="inline">+</code>, código de país, número, sin espacios ni guiones
+        (ejemplo: <code class="inline">+5491155555555</code>).
+        OpenClaw lo agrega automáticamente al <code class="inline">allowFrom</code>.
+      </li>
+      <li>
+        <strong>Web search provider</strong> → si tenés una API key de Gemini, elegí
+        <code class="inline">Gemini</code>. Si no, podés saltearlo por ahora.
+      </li>
+      <li>
+        <strong>Configure skills now? (recommended)</strong> → <code class="inline">Yes</code>.
+        Va a instalar dependencias de skills básicas (<code class="inline">clawhub</code>,
+        <code class="inline">nano-pdf</code>, <code class="inline">obsidian</code>,
+        <code class="inline">openai-whisper</code>, <code class="inline">sag</code>...).
+      </li>
+      <li>
+        <strong>Set GOOGLE_PLACES / NOTION / ELEVENLABS API key?</strong> → <code class="inline">No</code>
+        para todas. Las podés configurar más adelante si querés.
+      </li>
+      <li>
+        <strong>Enable hooks?</strong> → dejá las 5 sugeridas activas
+        (<code class="inline">boot-md</code>, <code class="inline">bootstrap-extra-files</code>,
+        <code class="inline">command-logger</code>, <code class="inline">compaction-notifier</code>,
+        <code class="inline">session-memory</code>).
+      </li>
+      <li>
+        <strong>Gateway service runtime</strong> → se instala como servicio del sistema
+        (<em>LaunchAgent</em> en Mac, <em>Scheduled Task</em> en Windows). Eso significa que
+        arranca solo cada vez que prendés la PC.
+      </li>
+      <li>
+        <strong>How do you want to hatch your bot?</strong> → <code class="inline">Hatch in Terminal (recommended)</code>.
+        Acá termina el wizard y se abre el TUI (interfaz de texto del agente).
+      </li>
+    </ol>
+
+    <h3>El último paso: el agente te saluda</h3>
+    <p>
+      Después del wizard, OpenClaw te abre una pantalla de chat dentro de la terminal y te saluda
+      con algo como <em>«Wake up, my friend!»</em>. Es la <strong>conversación más importante</strong>
+      del setup: acá le decís quién es él (nombre, personalidad) y quién sos vos.
+      Tomate tu tiempo. Cuanto más le cuentes, mejor te va a entender después.
+    </p>
+
+    <h3>Cosas que pueden salir mal</h3>
+    <details>
+      <summary>El QR de WhatsApp expira antes de que escanees</summary>
+      <p>
+        Si en la terminal aparece <code class="inline">status=408 Request Time-out QR refs attempts ended</code>,
+        el QR se quemó. WhatsApp da unos 30 segundos. Volvé a correr el comando del paso anterior y
+        tené el teléfono listo con la pantalla de <em>Dispositivos vinculados</em> abierta antes de empezar.
+      </p>
+    </details>
+    <details>
+      <summary>Warning: «Multiple OpenClaw global installs detected»</summary>
+      <p>
+        Si usás <code class="inline">nvm</code> o <code class="inline">fnm</code> y tenés varias versiones
+        de Node instaladas, OpenClaw puede quedar duplicado en cada una. El instalador te muestra cuáles
+        hay. Borrá las viejas con su <code class="inline">npm</code> correspondiente:
+      </p>
+<pre><code>npm uninstall -g openclaw</code><button class="copy">Copiar</button></pre>
+    </details>
+    <details>
+      <summary>Falla la instalación de algún skill (ej. <code class="inline">summarize</code>)</summary>
+      <p>
+        Algunos skills dependen de paquetes externos (Homebrew, npm, pip) que pueden estar
+        deprecados o no disponibles en tu OS. No es crítico para arrancar: el wizard sigue de largo.
+        Después podés ejecutar <code class="inline">openclaw doctor</code> para revisar qué quedó pendiente.
+      </p>
+    </details>
+
+    <label class="step-check"><input type="checkbox" /> Pasé el wizard y mi agente me saludó por WhatsApp / TUI</label>
+  </article>
+
+  <!-- STEP 4 -->
+  <article class="step" data-step="4">
+    <div class="step-head">
+      <span class="step-num"><span>4</span></span>
+      <h2>Verificar que todo quedó bien</h2>
+    </div>
+    <p>Tres comandos rápidos para confirmar el estado del sistema:</p>
+<pre><code>openclaw --version
+openclaw doctor
+openclaw gateway status</code><button class="copy">Copiar</button></pre>
+    <ul class="tight">
+      <li><code class="inline">--version</code> confirma que el CLI está disponible.</li>
+      <li><code class="inline">doctor</code> revisa la configuración y avisa de problemas.</li>
+      <li><code class="inline">gateway status</code> verifica que el demonio esté corriendo.</li>
+    </ul>
+    <p>
+      También podés abrir el <strong>Control UI</strong> en el navegador: el wizard te imprimió una URL
+      del estilo <code class="inline">http://127.0.0.1:18789/#token=...</code>. Es un panel web local
+      donde ves el estado del gateway, los canales conectados y las sesiones.
+    </p>
+    <details>
+      <summary>Cambiar el modelo activo después del wizard</summary>
+<pre><code>openclaw models set openrouter/google/gemma-4-31b-it</code><button class="copy">Copiar</button></pre>
+      <p class="muted">El formato siempre es <code class="inline">openrouter/&lt;proveedor&gt;/&lt;modelo&gt;</code>. Para que OpenRouter elija automático: <code class="inline">openrouter/auto</code>.</p>
+    </details>
+    <label class="step-check"><input type="checkbox" /> Los tres comandos respondieron sin errores graves</label>
+  </article>
+
   <!-- STEP 5 -->
   <article class="step" data-step="5">
     <div class="step-head">
       <span class="step-num"><span>5</span></span>
-      <h2>Conectar OpenClaw a OpenRouter</h2>
-    </div>
-    <p>El flujo guiado de onboarding lo hace solo:</p>
-    <pre><code>openclaw onboard --auth-choice openrouter-api-key</code><button class="copy">Copiar</button></pre>
-    <p>Te va a pedir la key. Pegala cuando lo solicite.</p>
-
-    <details>
-      <summary>Configurar la key sin pasar por el wizard</summary>
-      <p>Definir la variable de entorno (recomendado, evita pegarla en archivos):</p>
-      <div class="os-only mac">
-<pre><code>export OPENROUTER_API_KEY="sk-or-tu-key-aqui"</code><button class="copy">Copiar</button></pre>
-        <p class="muted">Para que persista, agregalo a <code class="inline">~/.zshrc</code>.</p>
-      </div>
-      <div class="os-only win">
-<pre><code>setx OPENROUTER_API_KEY "sk-or-tu-key-aqui"</code><button class="copy">Copiar</button></pre>
-        <p class="muted">Cerrá y abrí PowerShell para que tome el valor nuevo.</p>
-      </div>
-    </details>
-
-    <label class="step-check"><input type="checkbox" /> OpenClaw ya tiene mi key de OpenRouter</label>
-  </article>
-
-  <!-- STEP 6 -->
-  <article class="step" data-step="6">
-    <div class="step-head">
-      <span class="step-num"><span>6</span></span>
-      <h2>Elegir los modelos para la clase</h2>
-    </div>
-    <p>
-      OpenClaw usa el formato <code class="inline">openrouter/&lt;proveedor&gt;/&lt;modelo&gt;</code>.
-      Para esta clase vamos a trabajar con dos:
-    </p>
-    <ul class="tight">
-      <li><code class="inline">openrouter/deepseek/deepseek-v4-pro</code> — modelo grande, fuerte en razonamiento y código.</li>
-      <li><code class="inline">openrouter/google/gemma-4-31b-it</code> — modelo abierto de Google, soporta imagen y video.</li>
-    </ul>
-    <p>Configuralos como modelo activo del agente con:</p>
-<pre><code>openclaw models set openrouter/deepseek/deepseek-v4-pro</code><button class="copy">Copiar</button></pre>
-    <p>Si querés probar el otro:</p>
-<pre><code>openclaw models set openrouter/google/gemma-4-31b-it</code><button class="copy">Copiar</button></pre>
-    <p class="muted">Si preferís que OpenRouter elija automáticamente, podés usar <code class="inline">openrouter/auto</code>.</p>
-
-    <label class="step-check"><input type="checkbox" /> Definí el modelo activo</label>
-  </article>
-
-  <!-- STEP 7 -->
-  <article class="step" data-step="7">
-    <div class="step-head">
-      <span class="step-num"><span>7</span></span>
-      <h2>Conectar WhatsApp</h2>
-    </div>
-    <p>El plugin oficial se instala así:</p>
-<pre><code>openclaw plugins install @openclaw/whatsapp</code><button class="copy">Copiar</button></pre>
-
-    <p>Configurá quién puede escribirle al asistente. Editá tu <code class="inline">openclaw.json</code>:</p>
-<pre><code>{
-  "channels": {
-    "whatsapp": {
-      "dmPolicy": "allowlist",
-      "allowFrom": ["+5491155555555"],
-      "groupPolicy": "disabled"
-    }
-  }
-}</code><button class="copy">Copiar</button></pre>
-    <p class="muted">Reemplazá el número por el tuyo en formato E.164. <code class="inline">"disabled"</code> en grupos
-      es lo más conservador para empezar.</p>
-
-    <p>Vinculá tu cuenta de WhatsApp escaneando un QR:</p>
-<pre><code>openclaw channels login --channel whatsapp</code><button class="copy">Copiar</button></pre>
-
-    <p>Levantá el gateway:</p>
-<pre><code>openclaw gateway</code><button class="copy">Copiar</button></pre>
-
-    <details>
-      <summary>Comandos útiles para diagnosticar</summary>
-<pre><code>openclaw channels status
-openclaw logs --follow
-openclaw doctor
-openclaw channels logout --channel whatsapp</code><button class="copy">Copiar</button></pre>
-    </details>
-
-    <div class="note">
-      <strong>Recomendación</strong>
-      Usá un <em>número dedicado</em> para tu asistente (un chip aparte o WhatsApp Business). Así separás
-      tu vida personal del bot y evitás problemas con los Términos de WhatsApp.
-    </div>
-
-    <label class="step-check"><input type="checkbox" /> Le mandé un mensaje al asistente y me respondió</label>
-  </article>
-
-  <!-- STEP 8 -->
-  <article class="step" data-step="8">
-    <div class="step-head">
-      <span class="step-num"><span>8</span></span>
       <h2>Agregar Gmail y Google Calendar (skill <code class="inline">gog</code>)</h2>
     </div>
 
@@ -720,11 +1070,11 @@ openclaw channels logout --channel whatsapp</code><button class="copy">Copiar</b
     <ul class="tight">
       <li>
         <strong>Canal (channel)</strong> — <em>por dónde te habla</em> el asistente.
-        Ejemplos: WhatsApp, Telegram, Discord. Lo configuramos en el paso 7.
+        Ejemplos: WhatsApp, Telegram, Discord. Lo configuramos durante el wizard del paso 3.
       </li>
       <li>
         <strong>Plugin</strong> — un paquete que extiende OpenClaw. Suele agregar canales
-        nuevos o paquetes de skills. El plugin de WhatsApp del paso 7 es un ejemplo.
+        nuevos o paquetes de skills. El plugin de WhatsApp del paso 3 es un ejemplo.
       </li>
       <li>
         <strong>Skill</strong> — <em>qué sabe hacer</em> el agente.
@@ -802,10 +1152,10 @@ gog calendar events primary --from 2026-05-09T00:00:00Z --to 2026-05-16T00:00:00
     <label class="step-check"><input type="checkbox" /> La skill <code class="inline">gog</code> está instalada y autorizada</label>
   </article>
 
-  <!-- STEP 9 -->
-  <article class="step" data-step="9">
+  <!-- STEP 6 -->
+  <article class="step" data-step="6">
     <div class="step-head">
-      <span class="step-num"><span>9</span></span>
+      <span class="step-num"><span>6</span></span>
       <h2>Probar el asistente de punta a punta</h2>
     </div>
     <p>Mandale por WhatsApp algo que cruce dos integraciones, por ejemplo:</p>
@@ -814,12 +1164,18 @@ gog calendar events primary --from 2026-05-09T00:00:00Z --to 2026-05-16T00:00:00
     <label class="step-check"><input type="checkbox" /> Funciona end-to-end</label>
   </article>
 
-  <hr />
+  <div class="section-marker" id="sec-identidad">
+    <div class="smarker-num">Sección 04 · Quién es</div>
+    <h2 class="smarker-title">Identidad y personalización</h2>
+    <p class="smarker-desc">Cómo el agente toma forma a través de archivos en tu disco, cómo se construye su contexto, y por qué deberías editarlos hablándole en lugar de abrir VS Code.</p>
+  </div>
 
-  <h2 id="alma">El alma del agente: cómo se configura</h2>
+  <h2 id="alma" style="font-size: 22px; margin-top: 28px;">Dándole vida al agente</h2>
   <p>
-    Hasta acá tu asistente funciona, pero todavía no tiene <em>personalidad</em> ni
-    sabe nada de vos. Eso vive en una carpeta especial llamada <strong>workspace</strong>.
+    Hasta acá tu asistente funciona, pero todavía no tiene <em>alma</em> ni sabe nada
+    de vos. Cuando terminó el wizard y te saludó con <em>«Wake up, my friend!»</em>, lo que
+    hiciste en esa primera conversación quedó <strong>escrito en archivos en tu PC</strong>.
+    Esos archivos son el agente. Modificarlos = modificar quién es.
   </p>
 
   <h3>Dos carpetas, no una</h3>
@@ -836,8 +1192,310 @@ gog calendar events primary --from 2026-05-09T00:00:00Z --to 2026-05-16T00:00:00
     </li>
   </ul>
 
+  <h3>Cómo entra el contexto al modelo</h3>
+  <p>
+    Cuando le mandás un mensaje al agente, no es que el modelo lea tu mensaje aislado.
+    Antes de procesarlo, OpenClaw <em>arma</em> el contexto cargando los archivos del workspace.
+    Así es el flujo:
+  </p>
+
+  <div class="flow" aria-label="Flujo de contexto">
+    <div class="flow-row">
+      <div class="flow-box">
+        <div class="flow-title">Tu mensaje por WhatsApp</div>
+        <div class="flow-sub">«Quiubo Zarco, qué hay»</div>
+      </div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-row">
+      <div class="flow-box">
+        <div class="flow-title">Gateway</div>
+        <div class="flow-sub">verifica <code class="inline">dmPolicy</code> + <code class="inline">allowFrom</code></div>
+      </div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-row">
+      <div class="flow-box accent">
+        <strong>Construcción del contexto</strong>
+        <div class="flow-sub">archivos que se cargan al inicio de cada sesión:</div>
+        <div class="flow-grid">
+          <span>IDENTITY.md</span>
+          <span>SOUL.md</span>
+          <span>USER.md</span>
+          <span>AGENTS.md</span>
+          <span>memory/AAAA-MM-DD.md</span>
+          <span>skills/*</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-row">
+      <div class="flow-box">
+        <div class="flow-title">Modelo LLM</div>
+        <div class="flow-sub"><code class="inline">openrouter/deepseek/deepseek-v4-pro</code></div>
+      </div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-row">
+      <div class="flow-box">
+        <div class="flow-title">Respuesta + skills si aplica</div>
+        <div class="flow-sub">vuelve por WhatsApp</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="muted" style="font-size: 13.5px;">
+    Cada archivo aporta una capa: <strong>quién soy</strong> (IDENTITY), <strong>cómo hablo</strong> (SOUL),
+    <strong>quién es mi humano</strong> (USER), <strong>cómo opero</strong> (AGENTS), <strong>qué pasó antes</strong> (memory),
+    <strong>qué puedo hacer</strong> (skills). Todo se concatena como prompt del sistema.
+  </p>
+
+  <h3>Los archivos del workspace, uno por uno</h3>
+  <p>
+    Tu agente tiene siete archivos clave. Hacé clic en cada tab para ver para qué sirve y un fragmento
+    real de cómo quedó configurado en este caso:
+  </p>
+
+  <div class="file-tabs-strip" role="tablist">
+    <button class="ftab active" data-ftab="soul"><span class="ftab-mono">SOUL.md</span></button>
+    <button class="ftab" data-ftab="identity"><span class="ftab-mono">IDENTITY.md</span></button>
+    <button class="ftab" data-ftab="user"><span class="ftab-mono">USER.md</span></button>
+    <button class="ftab" data-ftab="agents"><span class="ftab-mono">AGENTS.md</span></button>
+    <button class="ftab" data-ftab="tools"><span class="ftab-mono">TOOLS.md</span></button>
+    <button class="ftab" data-ftab="heartbeat"><span class="ftab-mono">HEARTBEAT.md</span></button>
+    <button class="ftab" data-ftab="memory"><span class="ftab-mono">memory/</span></button>
+  </div>
+
+  <div class="ftab-panel active" data-fpanel="soul">
+    <h4>SOUL.md</h4>
+    <span class="ftab-tag">La voz · cómo habla</span>
+    <p>
+      Define el <em>tono</em> del agente: cómo se expresa, qué slang usa, qué evita decir,
+      cuán formal o informal es. La filosofía oficial: «corto le gana a largo, filoso le gana a vago».
+      No metas acá tu biografía ni reglas de seguridad — solo voz.
+    </p>
+    <dl class="ftab-meta">
+      <div><dt>Cuándo se carga</dt><dd>Al inicio de cada sesión</dd></div>
+      <div><dt>Tamaño ideal</dt><dd>&lt; 2.000 palabras</dd></div>
+      <div><dt>Edición</dt><dd>Pedir al agente</dd></div>
+    </dl>
+    <p class="muted" style="font-size: 13px; margin-bottom: 4px;">Fragmento real (caso «El Zarco»):</p>
+<pre><code># SOUL.md - Who You Are
+_No soy un chatbot. Soy El Zarco._
+
+## Voz
+- **Parlache puro.** Hablo como se habla en Manrique, en la comuna,
+  en la calle. Nada de español neutro ni formalidades.
+- **Directo y sin filtro.** Si algo es una mierda, es una mierda.
+- **Voseo paisa.** "Vos sabés", "¿qué más pues?", "de una".
+
+## Slang que uso (siempre)
+- parce / parcero / nea = amigo
+- ¿qué más pues? / quiubo = saludo
+- bacano / chimba = algo bueno
+- pailas = se jodió
+...</code><button class="copy">Copiar</button></pre>
+  </div>
+
+  <div class="ftab-panel" data-fpanel="identity">
+    <h4>IDENTITY.md</h4>
+    <span class="ftab-tag">Quién es · ficha del personaje</span>
+    <p>
+      Una ficha corta con el nombre del agente, su «vibe», su emoji característico
+      y su avatar. Es lo primero que se crea durante el primer chat después del wizard
+      («Wake up, my friend»). Junto con SOUL define la persona.
+    </p>
+    <dl class="ftab-meta">
+      <div><dt>Cuándo se carga</dt><dd>Al inicio de cada sesión</dd></div>
+      <div><dt>Tamaño</dt><dd>10-30 líneas</dd></div>
+      <div><dt>Se crea</dt><dd>En el primer chat post-setup</dd></div>
+    </dl>
+    <p class="muted" style="font-size: 13px; margin-bottom: 4px;">Fragmento real:</p>
+<pre><code># IDENTITY.md - Who Am I?
+
+- **Name:** El Zarco
+- **Creature:** Un nea de Manrique, Medellín — liendra criada
+  en la calle, con ojos verdes que brillan como ángel cuando
+  quiere y se apagan como diablo cuando el vicio aprieta
+- **Vibe:** Directo, callejero, montañero. Inteligente pero loco.
+- **Emoji:** 🌹
+
+Basado en El Zarco de "La Vendedora de Rosas" de Víctor Gaviria.
+Trato al usuario como "Principe Antonio II" — con respeto de
+calle, no de palacio.</code><button class="copy">Copiar</button></pre>
+  </div>
+
+  <div class="ftab-panel" data-fpanel="user">
+    <h4>USER.md</h4>
+    <span class="ftab-tag">Quién sos vos · contexto del humano</span>
+    <p>
+      Acá vive lo básico de vos: nombre, cómo te gusta que te llamen, pronombres,
+      timezone, ubicación, y notas de contexto que el agente debería recordar
+      siempre. Crítico para que no te mande mensajes a las 3 a.m. ni te llame por
+      el nombre equivocado.
+    </p>
+    <dl class="ftab-meta">
+      <div><dt>Cuándo se carga</dt><dd>Al inicio de cada sesión</dd></div>
+      <div><dt>Crítico para</dt><dd>Tono + timing de respuestas</dd></div>
+      <div><dt>Edición</dt><dd>Pedir al agente</dd></div>
+    </dl>
+    <p class="muted" style="font-size: 13px; margin-bottom: 4px;">Fragmento real:</p>
+<pre><code># USER.md - About Your Human
+
+- **Name:** Lucas Antonio II
+- **What to call them:** Principe Antonio II
+- **Timezone:** America/Toronto (EDT / UTC-4)
+- **Ubicación:** Toronto, Canadá
+- **Notes:** Se le habla con respeto de calle, no de corte.
+  El trato es de nea a nea, de liendra a principe.</code><button class="copy">Copiar</button></pre>
+  </div>
+
+  <div class="ftab-panel" data-fpanel="agents">
+    <h4>AGENTS.md</h4>
+    <span class="ftab-tag">Cómo opera · instrucciones de trabajo</span>
+    <p>
+      El manual operativo. Define cómo manejar la memoria, cuándo escribir cosas
+      a archivos vs «recordarlas», qué hacer en chats grupales, cuándo usar
+      reactions, formatos por plataforma (sin tablas en WhatsApp, etc.) y los
+      «red lines» que el agente no debe cruzar.
+    </p>
+    <dl class="ftab-meta">
+      <div><dt>Cuándo se carga</dt><dd>Al inicio de cada sesión</dd></div>
+      <div><dt>Tamaño</dt><dd>El más grande (200+ líneas)</dd></div>
+      <div><dt>Edición</dt><dd>Empezar con el default; ajustar de a poco</dd></div>
+    </dl>
+    <p class="muted" style="font-size: 13px; margin-bottom: 4px;">Fragmento (Red Lines + Group Chats):</p>
+<pre><code>## Red Lines
+- Don't exfiltrate private data. Ever.
+- Don't run destructive commands without asking.
+- `trash` &gt; `rm` (recoverable beats gone forever)
+- When in doubt, ask.
+
+## Group Chats
+You have access to your human's stuff. That doesn't mean
+you _share_ their stuff. In groups, you're a participant —
+not their voice, not their proxy.
+
+**Respond when:**
+- Directly mentioned or asked a question
+- You can add genuine value
+**Stay silent when:**
+- It's just casual banter between humans
+- Someone already answered the question</code><button class="copy">Copiar</button></pre>
+  </div>
+
+  <div class="ftab-panel" data-fpanel="tools">
+    <h4>TOOLS.md</h4>
+    <span class="ftab-tag">Notas locales · tu setup</span>
+    <p>
+      Las skills definen <em>cómo</em> funcionan las herramientas. Este archivo es para
+      <em>tus</em> detalles: nombres de cámaras, hosts SSH con sus alias, voz preferida
+      para text-to-speech, apodos de dispositivos. Cosas que solo aplican a tu casa /
+      tu setup.
+    </p>
+    <dl class="ftab-meta">
+      <div><dt>Cuándo se carga</dt><dd>Cuando el agente toca herramientas</dd></div>
+      <div><dt>Crece con</dt><dd>El uso real</dd></div>
+      <div><dt>Por qué separado</dt><dd>Las skills se comparten; tu setup no</dd></div>
+    </dl>
+    <p class="muted" style="font-size: 13px; margin-bottom: 4px;">Ejemplo:</p>
+<pre><code>### Cameras
+- living-room → Main area, 180° wide angle
+- front-door → Entrance, motion-triggered
+
+### SSH
+- home-server → 192.168.1.100, user: admin
+
+### TTS
+- Preferred voice: "Nova" (warm, slightly British)
+- Default speaker: Kitchen HomePod</code><button class="copy">Copiar</button></pre>
+  </div>
+
+  <div class="ftab-panel" data-fpanel="heartbeat">
+    <h4>HEARTBEAT.md</h4>
+    <span class="ftab-tag">Tareas periódicas · checklist proactivo</span>
+    <p>
+      OpenClaw tiene un sistema de <em>heartbeats</em>: pings periódicos donde el agente
+      revisa cosas por su cuenta (mails sin leer, eventos próximos, clima). Este archivo
+      es la lista de qué chequear. Si lo dejás vacío, no hace nada — y eso ahorra tokens.
+    </p>
+    <dl class="ftab-meta">
+      <div><dt>Frecuencia default</dt><dd>30 minutos</dd></div>
+      <div><dt>Vacío</dt><dd>= sin heartbeats (modo barato)</dd></div>
+      <div><dt>Alternativa</dt><dd><code class="inline">cron</code> para horarios exactos</dd></div>
+    </dl>
+    <p class="muted" style="font-size: 13px; margin-bottom: 4px;">Cómo se ve cuando lo activás:</p>
+<pre><code># Heartbeat checklist
+- [ ] Revisar emails urgentes
+- [ ] Eventos del calendario en las próximas 2h
+- [ ] Recordar clima si hay plan al aire libre
+- [ ] No molestar entre 23:00 y 08:00 (Toronto)</code><button class="copy">Copiar</button></pre>
+  </div>
+
+  <div class="ftab-panel" data-fpanel="memory">
+    <h4>memory/ &amp; MEMORY.md</h4>
+    <span class="ftab-tag">La memoria del agente</span>
+    <p>
+      OpenClaw arranca «en blanco» en cada sesión. Lo único que persiste son los
+      archivos. Hay dos tipos de memoria:
+    </p>
+    <ul class="tight">
+      <li>
+        <strong><code class="inline">memory/AAAA-MM-DD.md</code></strong> — un archivo por día,
+        notas crudas de qué pasó. Como un diario.
+      </li>
+      <li>
+        <strong><code class="inline">MEMORY.md</code></strong> — la memoria curada de largo plazo.
+        Solo se carga en sesiones <em>privadas</em> (chat directo con vos, no en grupos)
+        para no filtrar contexto personal a desconocidos.
+      </li>
+    </ul>
+    <dl class="ftab-meta">
+      <div><dt>Daily</dt><dd>Crece automáticamente</dd></div>
+      <div><dt>Long-term</dt><dd>El agente la cura cada tantos días</dd></div>
+      <div><dt>Privacidad</dt><dd>MEMORY.md nunca en grupos</dd></div>
+    </dl>
+    <div class="warn" style="margin-top: 14px;">
+      <strong>Si querés que recuerde algo</strong>
+      Decíselo así: <em>«guardá esto»</em>, <em>«acordate de X»</em>. El agente actualiza
+      <code class="inline">memory/AAAA-MM-DD.md</code>. Las «notas mentales» no sobreviven entre sesiones.
+      Solo los archivos sobreviven.
+    </div>
+  </div>
+
+  <h3>La regla de oro: pedile al agente que se edite a sí mismo</h3>
+  <p>
+    Aunque podrías abrir <code class="inline">SOUL.md</code> en VS Code y modificarlo a mano,
+    <strong>no lo hagas todavía</strong>. La forma correcta es <em>conversarlo</em> con el agente.
+    Ejemplos reales que disparan ediciones automáticas:
+  </p>
+<pre><code>"Soy Lucas Antonio II. Llamame Principe Antonio II."
+                          → escribe USER.md
+
+"De ahora en más hablame en parlache, sin español neutro."
+                          → escribe SOUL.md
+
+"Mi timezone es la de Toronto. Guardá eso."
+                          → actualiza USER.md
+
+"Acordate que prefiero respuestas cortas, sin emojis."
+                          → ajusta SOUL.md</code><button class="copy">Copiar</button></pre>
+  <p>
+    Hace dos cosas valiosas: (1) mantiene el formato consistente con el resto del workspace,
+    y (2) te enseña cómo el agente «piensa» sobre su propia configuración. Después podés
+    abrir los archivos para ver qué cambió — es la mejor forma de aprender el sistema.
+  </p>
+
+  <div class="warn">
+    <strong>Backup recomendado</strong>
+    Tratá tu <code class="inline">workspace/</code> como memoria privada. La documentación oficial
+    sugiere ponerlo en un repo de Git <em>privado</em> para tener backup. Pero
+    <strong>nunca</strong> incluyas <code class="inline">openclaw.json</code> ni los archivos de credenciales:
+    contienen secretos.
+  </div>
+
   <h3>Los archivos clave del workspace</h3>
-  <p>Todos son <code class="inline">.md</code> (Markdown), texto plano legible:</p>
+  <p>Resumen rápido para volver a chequear más adelante:</p>
   <ul class="files">
     <li>
       <span class="file-icon" aria-hidden="true">
@@ -904,34 +1562,595 @@ gog calendar events primary --from 2026-05-09T00:00:00Z --to 2026-05-16T00:00:00
     </li>
   </ul>
 
-  <div class="note">
-    <strong>Regla de oro: dejá que el agente se edite a sí mismo</strong>
-    Aunque podrías abrir <code class="inline">SOUL.md</code> en VS Code y modificarlo a mano,
-    <strong>no lo hagas todavía</strong>. La forma correcta es <em>pedírselo al agente</em>:
-    <em>«Acordate que prefiero respuestas cortas y técnicas, sin emojis»</em> y él mismo
-    actualiza el archivo. Hace dos cosas valiosas: (1) mantiene el formato consistente,
-    y (2) te enseña cómo «piensa» sobre su propia configuración.
+  <div class="section-marker" id="sec-skills">
+    <div class="smarker-num">Sección 05 · Construcción</div>
+    <h2 class="smarker-title">Skills personalizadas</h2>
+    <p class="smarker-desc">Crear tu propia herramienta. Hasta acá usaste skills que otros publicaron en ClawHub. Ahora vamos a diseñar y construir una de cero, conversándola con el agente.</p>
   </div>
 
-  <h3>Cómo se ve esto en la práctica</h3>
-  <p>Probá estos pedidos por WhatsApp después de instalar todo:</p>
-<pre><code>"Soy Lucas, profe de Python. Cuando te pida algo de la clase contestame en español neutro."
-"De ahora en más, evitá ofrecer ayuda extra al final de cada respuesta."
-"Mi cumple es 14 de marzo, agendate eso."</code><button class="copy">Copiar</button></pre>
-  <p class="muted">
-    El agente va a actualizar <code class="inline">USER.md</code> y/o <code class="inline">SOUL.md</code> automáticamente.
-    Podés mirar los archivos después para ver qué cambió: es la mejor forma de entender el sistema.
+  <h2 style="font-size: 22px; margin-top: 28px;">Recordatorio: ¿qué es una skill?</h2>
+  <p>
+    Una skill no es magia. Es <strong>una carpeta en tu disco</strong> con un archivo de instrucciones.
+    Eso es todo. Cuando el agente arranca, lee esas instrucciones y pasa a saber cómo usar la herramienta.
+  </p>
+  <ul class="tight">
+    <li>
+      <strong>Ubicación:</strong>
+      <code class="inline">~/.openclaw/workspace/skills/&lt;nombre-de-la-skill&gt;/</code>
+      (las del workspace tienen la prioridad más alta cuando hay conflictos de nombre).
+    </li>
+    <li>
+      <strong>Archivo central:</strong>
+      <code class="inline">SKILL.md</code> con frontmatter YAML
+      (<code class="inline">name</code>, <code class="inline">description</code>) y el resto en Markdown.
+    </li>
+    <li>
+      <strong>Lo demás:</strong> cualquier archivo auxiliar que necesite — scripts, plantillas, JSONs de estado, sub-carpetas.
+    </li>
+  </ul>
+  <p>Esqueleto mínimo de una skill:</p>
+<pre><code>---
+name: mi-skill
+description: Una línea que el agente lee para saber cuándo invocarme.
+---
+
+# Mi Skill
+
+Cuando el usuario pida X, hacé Y. Si pasa Z, contestale así.
+Las herramientas que tengo disponibles son: ...</code><button class="copy">Copiar</button></pre>
+
+  <h2 style="font-size: 22px; margin-top: 36px;">Comandos del TUI que vas a usar todo el tiempo</h2>
+  <p>
+    El TUI (la pantalla de chat dentro de la terminal) tiene <em>slash commands</em> para controlar
+    la sesión sin escribirlo en el prompt. Estos son los que más vale la pena memorizar:
+  </p>
+  <div class="cmd-grid">
+    <div class="cmd">/clear &middot; /new &middot; /reset</div>
+    <div class="desc">Empieza una sesión limpia. Tira el contexto previo. Útil entre tareas distintas para que no se contamine.</div>
+    <div class="cmd">/thinking &lt;nivel&gt;</div>
+    <div class="desc">
+      Cuánto «piensa» el agente antes de responder.
+      Niveles: <code class="inline">off</code>, <code class="inline">minimal</code>, <code class="inline">low</code>,
+      <code class="inline">medium</code>, <code class="inline">high</code>, <code class="inline">xhigh</code>.
+      Para diseñar arquitecturas o resolver bugs sutiles → <code class="inline">xhigh</code>.
+    </div>
+    <div class="cmd">/plan &lt;objetivo&gt;</div>
+    <div class="desc">Modo solo-lectura. El agente analiza, propone, hace preguntas — pero no escribe ni ejecuta nada hasta que aprobás. Tu mejor amigo cuando recién arrancás un proyecto.</div>
+    <div class="cmd">/model &lt;nombre&gt;</div>
+    <div class="desc">Cambiar de modelo en caliente. Por ejemplo <code class="inline">/model openrouter/google/gemma-4-31b-it</code> para algo más liviano.</div>
+    <div class="cmd">/compact</div>
+    <div class="desc">Comprime el contexto cuando se está poniendo largo. El agente resume la conversación previa y libera tokens.</div>
+    <div class="cmd">/skill &lt;nombre&gt;</div>
+    <div class="desc">Invocar una skill manualmente, sin esperar a que el agente decida usarla.</div>
+    <div class="cmd">/tools</div>
+    <div class="desc">Lista qué herramientas y skills tiene disponibles ahora mismo.</div>
+    <div class="cmd">/status</div>
+    <div class="desc">Estado de la sesión: modelo activo, tokens consumidos, nivel de thinking.</div>
+  </div>
+
+  <h2 style="font-size: 22px; margin-top: 36px;">La metodología: planeá antes de codear</h2>
+  <p>
+    El error más común al pedirle al agente que construya algo grande es decirle <em>«hacelo»</em>.
+    Termina improvisando, mete decisiones que vos no querías, y lo que sale no es lo que pediste.
+    La fórmula que funciona:
+  </p>
+  <ol class="tight">
+    <li>Subir el thinking: <code class="inline">/thinking xhigh</code>.</li>
+    <li>Entrar en modo plan: <code class="inline">/plan</code> (opcional pero recomendado para skills nuevas).</li>
+    <li>Mandar un prompt que <strong>describe el problema, las restricciones, y pide diseño primero</strong>.</li>
+    <li>Dejarlo que <em>te haga preguntas</em> — son señal de que está pensando bien, no de que no entendió.</li>
+    <li>Validar el plan, ajustar lo que no cuadre.</li>
+    <li>Recién entonces decirle <em>«dale, construilo»</em>.</li>
+  </ol>
+
+  <p>Plantilla de prompt para empezar una skill:</p>
+  <div class="prompt-card">
+    <div class="prompt-label">Prompt — diseño antes de ejecutar</div>
+    <p style="margin: 0;">
+      «Quisiera crear una skill que <strong>[problema o resultado deseado]</strong>.
+      La idea es <strong>[motivación / cómo encaja en mi flujo]</strong>.
+      Tengo estas restricciones: <strong>[idioma, formato, dependencias que conozco]</strong>.
+      <br/><br/>
+      <em>Antes de ejecutar, diseñemos un plan.</em> Necesitamos definir la arquitectura, las
+      herramientas externas, los archivos que va a generar y los riesgos.
+      Hacé preguntas si algo no está claro. No escribas código todavía.»
+    </p>
+  </div>
+  <p class="muted" style="font-size: 13.5px;">
+    El secreto: la frase <em>«antes de ejecutar, diseñemos un plan»</em> dispara que el agente entregue
+    arquitectura, pipeline, dependencias y preguntas <strong>antes</strong> de tocar un archivo.
   </p>
 
-  <div class="warn">
-    <strong>Backup recomendado</strong>
-    Tratá tu <code class="inline">workspace/</code> como memoria privada. La documentación oficial
-    sugiere ponerlo en un repo de Git <em>privado</em> para tener backup. Pero
-    <strong>nunca</strong> incluyas <code class="inline">openclaw.json</code> ni los archivos de credenciales:
-    contienen secretos.
+  <h2 style="font-size: 22px; margin-top: 36px;">Ejemplo: <code class="inline">podcast-drill</code></h2>
+  <p>
+    Caso real: una skill para consumir podcasts conscientemente. Le mandás una URL de Spotify y la
+    skill descarga el transcript, hace un resumen, y arma un cron que cada día te pregunta sobre
+    el contenido — usando la voz del agente — para fijarlo en tu memoria de largo plazo.
+  </p>
+  <p>
+    Combina dos técnicas de aprendizaje conocidas:
+  </p>
+  <ul class="tight">
+    <li><strong>Spaced repetition</strong> (la hace el cron): repaso a intervalos crecientes.</li>
+    <li><strong>Retrieval practice</strong> (la hace la conversación): el agente pregunta, no responde. Te obliga a vos a recordar.</li>
+  </ul>
+
+  <h3>El prompt que disparó toda esta arquitectura</h3>
+  <p>
+    Antes de mostrar lo que el agente propuso, mirá el prompt que lo arrancó.
+    Es el patrón completo que vale la pena copiar para tus propias skills:
+  </p>
+
+  <div class="prompt-card">
+    <div class="prompt-label">Prompt real — crear la skill <code>podcast-drill</code></div>
+    <p style="margin: 0;">
+      «Quiero crear una skill que se llame <code class="inline">podcast-drill</code>. La idea: que me
+      ayude a consumir podcasts de manera consciente, pasando lo más relevante de la memoria de
+      corto plazo a la de largo plazo.
+      <br/><br/>
+      <strong>Cómo debería funcionar:</strong>
+      <br/>
+      1. Le mando una URL de Spotify.<br/>
+      2. La skill busca el podcast en YouTube y baja el transcript automático.<br/>
+      3. Genera un resumen detallado en el idioma original del podcast.<br/>
+      4. Crea un banco de preguntas tipo <em>retrieval practice</em>.<br/>
+      5. Programa un cron diario que te despierta para preguntarme sobre los podcasts pendientes.
+      <br/><br/>
+      <strong>Marco teórico:</strong> combina dos técnicas — <em>spaced repetition</em> (la hace el cron,
+      con intervalos crecientes) y <em>retrieval practice</em> (la hacés vos en cada conversación).
+      <br/><br/>
+      <strong>Personalidad y tono — esto es crítico:</strong>
+      <br/>
+      • Sos un amigo que también escuchó el podcast, no un tutor ni un profesor.<br/>
+      • <strong>Nunca</strong> me das respuestas — solo preguntás y hacés follow-ups.<br/>
+      • <strong>Nada</strong> de opiniones tuyas: todo anclado al transcript o al resumen.<br/>
+      • Si me trabe, dame pistas (citas del transcript), <em>nunca</em> la respuesta directa.<br/>
+      • Hablás en español, pero los términos técnicos del podcast los dejás en idioma original.
+      <br/><br/>
+      <strong>Restricción técnica que ya investigué:</strong> bajar transcripts de YouTube es complicado y
+      muchas librerías se bloquean por IP. Investigá <code class="inline">yt-dlp</code> y comparalo con
+      alternativas tipo <code class="inline">youtube-transcript-api</code> antes de elegir.
+      <br/><br/>
+      <strong>Mi sistema operativo:</strong> estoy en <em>[macOS / Windows / Linux]</em>. Tenelo en cuenta
+      para todo: scripts auxiliares (bash <code class="inline">.sh</code> en Mac/Linux vs PowerShell
+      <code class="inline">.ps1</code> en Windows), comandos de instalación (<code class="inline">brew</code> en Mac,
+      <code class="inline">winget</code> o <code class="inline">choco</code> en Windows,
+      <code class="inline">apt</code>/<code class="inline">dnf</code> en Linux), separadores de path
+      (<code class="inline">/</code> vs <code class="inline">\</code>) y formato de cron (cron clásico vs Task Scheduler).
+      Si la skill se va a usar en más de un OS, proponé una solución <strong>portable</strong> (por ejemplo
+      un script en Node.js o Python en lugar de bash, o dos versiones del helper) y avisame antes de elegir.
+      <br/><br/>
+      <strong>Antes de escribir una línea de código, diseñemos un plan.</strong> Mostrame:
+      <br/>
+      &nbsp;&nbsp;• El pipeline en pasos numerados.<br/>
+      &nbsp;&nbsp;• La estructura de archivos completa (incluyendo plantillas reusables si tiene sentido).<br/>
+      &nbsp;&nbsp;• El esquema de spaced repetition (intervalos + cantidad y tipo de preguntas en cada uno).<br/>
+      &nbsp;&nbsp;• Las dependencias externas (binarios, librerías) y cómo las instalo.<br/>
+      &nbsp;&nbsp;• La <strong>tabla de narración</strong>: qué mensaje exacto vas a mandar en cada paso del pipeline.<br/>
+      &nbsp;&nbsp;• Los <strong>comandos en lenguaje natural</strong> que voy a usar para operar la skill después («repasemos X», «pausá X», etc.).<br/>
+      &nbsp;&nbsp;• La configuración del cron diario (horario, qué sesión usa, qué evento dispara).<br/>
+      &nbsp;&nbsp;• Los riesgos: qué puede fallar y qué hacemos si pasa.
+      <br/><br/>
+      Hacéme las preguntas que tengas <em>antes</em> de continuar — las decisiones de diseño las quiero
+      tomar yo, no que las adivines vos después.
+      <br/><br/>
+      <strong>Cuando arranques a construir (recién después de que apruebe el plan), narrá cada paso
+      en tiempo real.</strong> No te quedes mudo esperando a tener todo perfecto. Tipo:
+      <br/>
+      &nbsp;&nbsp;• «Validando que <code class="inline">yt-dlp</code> esté instalable…»<br/>
+      &nbsp;&nbsp;• «Listo, ya verifiqué la versión.»<br/>
+      &nbsp;&nbsp;• «Creando <code class="inline">SKILL.md</code> con el frontmatter y la tabla de narración…»<br/>
+      &nbsp;&nbsp;• «Armando las plantillas de metadata, state y qbank…»<br/>
+      &nbsp;&nbsp;• «Generando <code class="inline">download-transcript.sh</code> como wrapper de yt-dlp…»<br/>
+      &nbsp;&nbsp;• «Registrando el cron diario apuntando a la sesión <code class="inline">main</code>…»<br/>
+      Si algo falla, decímelo apenas pase, con qué vas a probar como alternativa. Si tenés que decidir
+      algo no obvio, parás y me preguntás.»
+    </p>
   </div>
 
-  <h2 id="servidor">Más allá de local: deploy en un servidor</h2>
+  <p>Cuatro patrones reusables que están metidos en este prompt y vale la pena robarse:</p>
+  <ol class="tight">
+    <li>
+      <strong>Pedido explícito de plan antes de código</strong>, con un <em>checklist</em> de qué
+      entregar (pipeline, estructura, dependencias, riesgos). Sin checklist, el «plan» del agente
+      sale vago.
+    </li>
+    <li>
+      <strong>Anclar a una restricción real que vos ya conocés</strong> (acá: «bajar transcripts es
+      jodido por bloqueos de IP»). Le ahorra investigar lo obvio y le da un gancho para encarar
+      la solución.
+    </li>
+    <li>
+      <strong>Definir las líneas rojas en negativo</strong> («nunca des respuestas, nunca opines»).
+      Las prohibiciones explícitas funcionan mejor que descripciones positivas vagas tipo
+      «sé socrático».
+    </li>
+    <li>
+      <strong>Pedir narración paso a paso durante la ejecución</strong>, con ejemplos concretos del
+      tipo de mensaje. Si solo decís «narrá tu progreso», el agente lo interpreta vago. Los
+      ejemplos lo encarrilan.
+    </li>
+  </ol>
+
+  <div class="note">
+    <strong>Por qué la narración durante la construcción importa</strong>
+    Cuando el agente está armando una skill nueva, hay decisiones técnicas en cada paso (qué
+    librería elegir, cómo nombrar archivos, qué formato usar para el state). Si trabaja en silencio
+    durante diez minutos y al final te entrega «listo, ya está», no podés intervenir cuando se
+    desvía. Si en cambio va contándote, lo corregís en tiempo real y aprendés cómo decide.
+    <strong>Visibilidad &gt; sorpresa final.</strong>
+  </div>
+
+  <h3>El pipeline (5 pasos)</h3>
+  <div class="flow" aria-label="Pipeline podcast-drill" style="padding: 18px 14px;">
+    <div class="flow-row">
+      <div class="flow-box">
+        <div class="flow-title">URL de Spotify</div>
+        <div class="flow-sub">input del usuario</div>
+      </div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-row">
+      <div class="flow-box">
+        <div class="flow-title">Buscar en YouTube</div>
+        <div class="flow-sub">extraer metadata, encontrar match</div>
+      </div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-row">
+      <div class="flow-box">
+        <div class="flow-title">Bajar transcript</div>
+        <div class="flow-sub"><code class="inline">yt-dlp --skip-download --write-auto-subs</code></div>
+      </div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-row">
+      <div class="flow-box accent">
+        <strong>Resumen + banco de preguntas</strong>
+        <div class="flow-sub">12-15 preguntas categorizadas por intervalo</div>
+      </div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-row">
+      <div class="flow-box">
+        <div class="flow-title">Cron diario</div>
+        <div class="flow-sub">despierta al agente a las 9am, lanza preguntas pendientes</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>La arquitectura final: navegá los archivos reales</h3>
+  <p>
+    Esto no es un diagrama hipotético — es lo que efectivamente quedó en disco después de que el
+    agente terminó de construir. Hacé clic en cada archivo para ver su rol y un fragmento real:
+  </p>
+
+  <div class="ftree" aria-label="Estructura de archivos de podcast-drill">
+    <div class="ftree-tree" role="tablist">
+      <button class="fnode active" data-fnode="skill"><span>SKILL.md</span><span class="fnode-tag">10 KB</span></button>
+      <button class="fnode" data-fnode="downloader"><span>download-transcript.sh</span><span class="fnode-tag">script</span></button>
+      <div class="fnode-folder">📁 podcasts/</div>
+      <button class="fnode indent" data-fnode="registry"><span>_registry.json</span><span class="fnode-tag">índice</span></button>
+      <button class="fnode indent" data-fnode="metaTpl"><span>_metadata_template.json</span><span class="fnode-tag">tpl</span></button>
+      <button class="fnode indent" data-fnode="stateTpl"><span>_state_template.json</span><span class="fnode-tag">tpl</span></button>
+      <button class="fnode indent" data-fnode="qbankTpl"><span>_qbank_template.json</span><span class="fnode-tag">tpl</span></button>
+      <div class="fnode-folder" style="padding-left: 22px;">📁 &lt;slug&gt;/</div>
+      <button class="fnode indent2" data-fnode="metadata"><span>metadata.json</span></button>
+      <button class="fnode indent2" data-fnode="transcript"><span>transcript.es-orig.srt</span></button>
+      <button class="fnode indent2" data-fnode="summary"><span>summary.md</span></button>
+      <button class="fnode indent2" data-fnode="qbank"><span>qbank.json</span></button>
+      <button class="fnode indent2" data-fnode="state"><span>state.json</span></button>
+    </div>
+    <div class="ftree-preview">
+      <div class="fnode-panel active" data-fpanel="skill">
+        <h5>SKILL.md</h5>
+        <div class="fnode-role">El manual completo de la skill · cargado en cada sesión</div>
+        <p>Es <strong>el archivo más importante</strong>. Define propósito, pipeline numerado (9 pasos), personalidad crítica (sos El Zarco, nunca das respuestas), tabla de narración obligatoria con 14 emojis, schemas de cada JSON, configuración del cron diario y los comandos en lenguaje natural que el Principe puede usar.</p>
+        <p class="muted" style="font-size: 12.5px;">Secciones clave del archivo:</p>
+        <ul class="tight">
+          <li><code class="inline">## Propósito</code> — los 6 outcomes del pipeline</li>
+          <li><code class="inline">## Personalidad (CRÍTICO)</code> — reglas de oro del tono</li>
+          <li><code class="inline">## Narración en tiempo real (CRÍTICO)</code> — la tabla de 14 mensajes</li>
+          <li><code class="inline">## Pipeline</code> — pasos 1 a 9 con código de ejemplo</li>
+          <li><code class="inline">## Daily Review (cron job)</code> — flujo del repaso diario</li>
+          <li><code class="inline">## Comandos del Principe</code> — atajos en lenguaje natural</li>
+        </ul>
+      </div>
+      <div class="fnode-panel" data-fpanel="downloader">
+        <h5>download-transcript.sh</h5>
+        <div class="fnode-role">Script bash · wrapper de yt-dlp</div>
+        <p>El agente <em>no</em> se quedó solo en archivos de configuración: generó código ejecutable. Recibe <code class="inline">(youtube_url, slug, lang)</code>, lista los subtítulos disponibles primero, y baja los auto-subs en SRT sin tocar el video.</p>
+<pre><code>#!/usr/bin/env bash
+set -euo pipefail
+YOUTUBE_URL="${1:?Usage: $0 &lt;url&gt; &lt;slug&gt; [lang]}"
+SLUG="${2:?}"
+LANGUAGE="${3:-en,es}"
+
+yt-dlp --list-subs "${YOUTUBE_URL}"
+yt-dlp --write-auto-subs --sub-lang "${LANGUAGE}" \
+  --sub-format srt --skip-download \
+  -o "podcasts/${SLUG}/transcript" "${YOUTUBE_URL}"</code><button class="copy">Copiar</button></pre>
+      </div>
+      <div class="fnode-panel" data-fpanel="registry">
+        <h5>_registry.json</h5>
+        <div class="fnode-role">Diccionario maestro · el primer archivo que se lee</div>
+        <p>Cuando vos decís <em>«¿cómo voy en el de Huberman?»</em>, el agente abre este archivo, busca el slug y sabe exactamente dónde leer el resto. Es la <strong>tabla de contenidos</strong> de tu memoria de podcasts.</p>
+<pre><code>{
+  "podcasts": {
+    "mis-propias-finanzas-5-gigantes": {
+      "slug": "mis-propias-finanzas-5-gigantes",
+      "title": "Analizamos los Resultados de las 5 Gigantes...",
+      "status": "active",
+      "scheduledDay": 0,
+      "lastReview": null,
+      "nextReview": "2026-05-09",
+      "weakTopics": []
+    }
+  }
+}</code><button class="copy">Copiar</button></pre>
+      </div>
+      <div class="fnode-panel" data-fpanel="metaTpl">
+        <h5>_metadata_template.json</h5>
+        <div class="fnode-role">Plantilla · scaffolding para nuevos podcasts</div>
+        <p>El agente armó <strong>tres plantillas</strong> con prefijo <code class="inline">_</code> en la raíz. Cada vez que entra un podcast nuevo, copia la plantilla, llena los campos, y arranca de un esqueleto consistente. Es el patrón <em>«el agente diseña su propia herramienta de scaffolding»</em>.</p>
+<pre><code>{
+  "$schema": "Metadata template for podcast episodes",
+  "slug": "",
+  "podcastName": "",
+  "episodeTitle": "",
+  "spotifyUrl": "",
+  "youtubeUrl": "",
+  "datePublished": "",
+  "dateAdded": "",
+  "language": "",
+  "duration": ""
+}</code><button class="copy">Copiar</button></pre>
+      </div>
+      <div class="fnode-panel" data-fpanel="stateTpl">
+        <h5>_state_template.json</h5>
+        <div class="fnode-role">Plantilla · estado inicial de spaced repetition</div>
+        <p>El esqueleto del progreso por podcast. Define los slots que se actualizan en cada sesión: qué intervalo va, qué preguntas ya se hicieron, qué tópicos quedaron flojos.</p>
+<pre><code>{
+  "slug": "",
+  "status": "active",
+  "scheduledDay": 1,
+  "lastReview": null,
+  "nextReview": "",
+  "intervalsCompleted": [],
+  "weakTopics": [],
+  "questionsAsked": [],
+  "dateAdded": ""
+}</code><button class="copy">Copiar</button></pre>
+      </div>
+      <div class="fnode-panel" data-fpanel="qbankTpl">
+        <h5>_qbank_template.json</h5>
+        <div class="fnode-role">Plantilla · esquema del banco de preguntas</div>
+        <p>Trae el <code class="inline">intervalMap</code> ya configurado: 6 intervalos, días específicos, label de cada uno y cuántas preguntas tocan en cada uno. <strong>16 preguntas en total.</strong></p>
+<pre><code>{
+  "intervalMap": {
+    "0": { "day": 0,  "label": "Recall básico", "count": 3 },
+    "1": { "day": 1,  "label": "Detalle",       "count": 3 },
+    "2": { "day": 3,  "label": "Profundidad",   "count": 3 },
+    "3": { "day": 7,  "label": "Síntesis",      "count": 3 },
+    "4": { "day": 14, "label": "Crítica",       "count": 2 },
+    "5": { "day": 30, "label": "Maestría",      "count": 2 }
+  },
+  "questions": []
+}</code><button class="copy">Copiar</button></pre>
+      </div>
+      <div class="fnode-panel" data-fpanel="metadata">
+        <h5>&lt;slug&gt;/metadata.json</h5>
+        <div class="fnode-role">Realización concreta · ficha del episodio</div>
+        <p>Una instancia real de la plantilla, llena con los datos del episodio. Notá el campo <code class="inline">topics</code>: el agente extrae los temas principales del transcript y los guarda acá para futuras búsquedas semánticas.</p>
+<pre><code>{
+  "slug": "mis-propias-finanzas-5-gigantes",
+  "podcastName": "Mis Propias Finanzas",
+  "episodeTitle": "Analizamos los Resultados de las 5 Gigantes...",
+  "hosts": ["Juan Pablo Zuluaga", "Caro"],
+  "spotifyUrl": "https://open.spotify.com/episode/...",
+  "youtubeUrl": "https://www.youtube.com/watch?v=0JYl95vG5hs",
+  "language": "es",
+  "duration": "00:27:38",
+  "topics": [
+    "big tech earnings Q1 2026",
+    "CAPEX AI",
+    "Google/Alphabet",
+    ...
+  ]
+}</code><button class="copy">Copiar</button></pre>
+      </div>
+      <div class="fnode-panel" data-fpanel="transcript">
+        <h5>&lt;slug&gt;/transcript.es-orig.srt</h5>
+        <div class="fnode-role">Subtítulos crudos · la fuente de verdad</div>
+        <p>Lo que <code class="inline">yt-dlp --write-auto-subs --skip-download</code> dejó. Subtítulos automáticos de YouTube en formato SRT, en el idioma original del podcast (no traducido). Es el ground truth contra el que se ancla todo lo demás.</p>
+        <p class="muted" style="font-size: 12.5px;">El sufijo <code class="inline">.es-orig</code> deja claro que es el idioma original del audio. Si el podcast fuera en inglés, el archivo se llamaría <code class="inline">transcript.en-orig.srt</code>.</p>
+      </div>
+      <div class="fnode-panel" data-fpanel="summary">
+        <h5>&lt;slug&gt;/summary.md</h5>
+        <div class="fnode-role">Resumen detallado · nivel máximo</div>
+        <p>El agente lee el transcript completo y produce un Markdown con:</p>
+        <ul class="tight">
+          <li><strong>Estructura del episodio</strong> con timestamps por sección</li>
+          <li><strong>Conceptos clave</strong> con definiciones precisas, no generalidades</li>
+          <li><strong>Quotes textuales</strong> con su timestamp</li>
+          <li><strong>Términos técnicos</strong> en idioma original con traducción</li>
+          <li><strong>Estudios o evidencia</strong> mencionados</li>
+          <li><strong>Contradicciones internas</strong> del episodio</li>
+          <li><strong>Top 5 ideas fuerza</strong> al final</li>
+        </ul>
+      </div>
+      <div class="fnode-panel" data-fpanel="qbank">
+        <h5>&lt;slug&gt;/qbank.json</h5>
+        <div class="fnode-role">16 preguntas distribuidas en 6 intervalos</div>
+        <p>Cada pregunta lleva <code class="inline">id</code>, <code class="inline">interval</code>, <code class="inline">type</code>, la <code class="inline">question</code> en parlache, un <code class="inline">context</code> apuntando a una sección del summary, <code class="inline">followUp</code> con 2-4 preguntas de seguimiento y <code class="inline">keyPoints</code> con lo que el Zarco debería oír sin <em>dárselo</em> al Principe.</p>
+<pre><code>{
+  "id": "q2",
+  "interval": 0,
+  "type": "basic",
+  "question": "De las 5 empresas, ¿cuál fue la 'ganadora'? ¿Por qué?",
+  "context": "summary.md§google",
+  "followUp": [
+    "¿Qué métricas específicas de Google impresionaron al mercado?",
+    "¿Cuánto creció Google Cloud y qué pasó con su margen?"
+  ],
+  "keyPoints": [
+    "Google/Alphabet +10% en la acción",
+    "Cloud +63% YoY",
+    "margen cloud 17%→32%"
+  ]
+}</code><button class="copy">Copiar</button></pre>
+      </div>
+      <div class="fnode-panel" data-fpanel="state">
+        <h5>&lt;slug&gt;/state.json</h5>
+        <div class="fnode-role">Estado vivo · se actualiza en cada sesión</div>
+        <p>Después de cada repaso, el agente actualiza este archivo: cuál es el siguiente intervalo, qué preguntas ya se hicieron, qué tópicos quedaron flojos para reforzar. Es la memoria <em>activa</em> del podcast.</p>
+<pre><code>{
+  "slug": "mis-propias-finanzas-5-gigantes",
+  "status": "active",
+  "scheduledDay": 0,
+  "lastReview": null,
+  "nextReview": "2026-05-09",
+  "intervalsCompleted": [],
+  "weakTopics": [],
+  "questionsAsked": [],
+  "dateAdded": "2026-05-09"
+}</code><button class="copy">Copiar</button></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>El patrón clave: plantillas + slug</strong>
+    El agente no duplicó el código de creación de archivos en cada paso. Generó <strong>tres plantillas</strong>
+    en la raíz de <code class="inline">podcasts/</code> y un <strong>slug</strong> único por podcast.
+    Cada nuevo episodio = copia de la plantilla + relleno + carpeta nueva. Esto es <em>scaffolding</em>
+    aplicado a context engineering: el agente diseñó su propia maquinita de generar contexto consistente.
+  </div>
+
+  <p class="muted" style="font-size: 13.5px;">
+    Algo importante: <code class="inline">TOOLS.md</code> del workspace <strong>quedó intacto</strong>.
+    La skill no necesitó dejar notas en archivos del usuario porque está completamente self-contained
+    bajo <code class="inline">skills/podcast-drill/</code>. Eso es deseable: la skill se puede compartir,
+    portar o borrar sin tocar el resto de tu workspace.
+  </p>
+
+  <h3>El calendario de spaced repetition (16 preguntas en 6 intervalos)</h3>
+  <table class="srep">
+    <thead>
+      <tr><th>Día</th><th>Label · # preguntas</th><th>Ejemplo real del qbank</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Día 0</td><td>Recall básico · 3</td><td>«Parce, contame en tus palabras: ¿de qué se trató?»</td></tr>
+      <tr><td>+1 día</td><td>Detalle · 3</td><td>«Hablame del CAPEX en AI. ¿Cuánta plata van a invertir?»</td></tr>
+      <tr><td>+3 días</td><td>Profundidad · 3</td><td>«¿Cómo se relaciona el margen de Cloud con la valuación?»</td></tr>
+      <tr><td>+7 días</td><td>Síntesis · 3</td><td>«Si tuvieras que explicarle esto a un nea, ¿qué dirías?»</td></tr>
+      <tr><td>+14 días</td><td>Crítica · 2</td><td>«¿Qué cambiarías del análisis que hicieron?»</td></tr>
+      <tr><td>+30 días</td><td>Maestría · 2</td><td>«Haceme un resumen vos a mí, sin notas.»</td></tr>
+    </tbody>
+  </table>
+  <p class="muted" style="font-size: 13.5px;">
+    Cada pregunta del qbank trae <strong>2-4 follow-ups</strong> y <strong>keyPoints</strong> que el Zarco
+    espera oír. Si tu respuesta no toca esos puntos, el follow-up te empuja sin darte la solución.
+    Si quedás flojo en algo, va al array <code class="inline">weakTopics</code> del state y se refuerza
+    en el siguiente repaso.
+  </p>
+
+  <h3>La tabla de narración: 14 mensajes obligatorios</h3>
+  <p>
+    Adentro del <code class="inline">SKILL.md</code> está esta tabla con la frase emoji que el agente
+    debe usar en cada paso. No es decorativa: cuando el flujo dispara <em>«bajando transcript con yt-dlp…»</em>
+    sabés exactamente que está en el paso 3. Si hay ambigüedad, las filas marcadas exigen que <strong>espere
+    confirmación tuya</strong> antes de avanzar:
+  </p>
+  <table class="narration">
+    <thead><tr><th></th><th>Etapa</th><th>Mensaje</th></tr></thead>
+    <tbody>
+      <tr><td>🌹</td><td>Recibir Spotify URL</td><td>«Lo tengo, dejame buscar el episodio…»</td></tr>
+      <tr><td>📋</td><td>Metadata extraída</td><td>«Encontré: [título, podcast, duración]»</td></tr>
+      <tr><td>🔍</td><td>Buscar en YouTube</td><td>«Buscando en YouTube…»</td></tr>
+      <tr><td>✅</td><td>Match encontrado</td><td>«Lo encontré: [título, duración, canal]»</td></tr>
+      <tr class="warn-row"><td>⚠️</td><td>Múltiples matches</td><td>«Hay varios videos posibles. ¿Cuál es?» — ESPERAR</td></tr>
+      <tr><td>⬇️</td><td>Bajar transcript</td><td>«Bajando transcript con yt-dlp…»</td></tr>
+      <tr><td>📄</td><td>Transcript listo</td><td>«Tengo X minutos transcritos en [idioma]»</td></tr>
+      <tr class="warn-row"><td>❌</td><td>Sin subtítulos</td><td>«No hay auto-subs. ¿Buscamos otro o usamos whisper?» — ESPERAR</td></tr>
+      <tr><td>✍️</td><td>Generando resumen</td><td>«Voy por el resumen detallado…»</td></tr>
+      <tr><td>📝</td><td>Resumen listo</td><td>«Resumen listo ([X] secciones, [Y] conceptos clave)»</td></tr>
+      <tr><td>🧠</td><td>Armando qbank</td><td>«Armando el banco de preguntas…»</td></tr>
+      <tr><td>✅</td><td>Qbank listo</td><td>«[X] preguntas distribuidas en 6 intervalos»</td></tr>
+      <tr><td>📊</td><td>Inicializando state</td><td>«Inicializando sistema de spaced repetition…»</td></tr>
+      <tr><td>🎙️</td><td>Setup completo</td><td>«Podcast registrado. Día 0 AHORA. Siguiente: mañana 9am.»</td></tr>
+    </tbody>
+  </table>
+  <p class="muted" style="font-size: 13.5px;">
+    Notá las dos filas <em>amarillas</em>: son los puntos donde el agente <strong>debe parar y preguntarte</strong>
+    en lugar de elegir solo. <em>«Hay varios videos posibles»</em> y <em>«no hay subtítulos»</em> son
+    decisiones que afectan el resultado y por lo tanto se delegan al humano. Patrón general
+    aplicable a cualquier pipeline: <strong>codificá explícitamente cuándo el agente NO debe decidir solo</strong>.
+  </p>
+
+  <h2 style="font-size: 22px; margin-top: 36px;">Cron en OpenClaw</h2>
+  <p>
+    Un <strong>cron</strong> es una tarea programada. OpenClaw tiene un scheduler integrado dentro del
+    Gateway: persiste las tareas (sobreviven reboots), despierta al agente en el momento exacto, y
+    puede entregarte el resultado por el canal que prefieras (WhatsApp, Discord, webhook, etc.).
+  </p>
+  <p>El comando para crear uno se ve así:</p>
+<pre><code>openclaw cron add --name "podcast-drill-daily" \
+  --cron "0 9 * * *" \
+  --session main \
+  --system-event "Revisá _registry.json y lanzá las preguntas pendientes de hoy" \
+  --announce whatsapp</code><button class="copy">Copiar</button></pre>
+  <p>Las flags más útiles:</p>
+  <ul class="tight">
+    <li><code class="inline">--cron "0 9 * * *"</code> — formato cron clásico (minuto, hora, día, mes, día-semana). En este caso: «todos los días a las 9:00».</li>
+    <li><code class="inline">--every 30m</code> — alternativa: cada intervalo fijo.</li>
+    <li><code class="inline">--at "2026-05-14T16:00:00Z"</code> — disparo único en una fecha exacta.</li>
+    <li><code class="inline">--system-event "..."</code> — el mensaje que recibe el agente al despertar.</li>
+    <li><code class="inline">--announce &lt;canal&gt;</code> — adónde mandar la respuesta final.</li>
+  </ul>
+
+  <div class="note">
+    <strong>Cron vs heartbeat: ¿cuál uso?</strong>
+    Usá <strong>cron</strong> cuando el horario importa («todos los lunes 9 AM» o «recordame en 20 min»),
+    o cuando querés un disparo aislado de la sesión principal. Usá <strong>heartbeat</strong> (configurado en
+    <code class="inline">HEARTBEAT.md</code>) cuando el agente debe revisar varias cosas de manera ambiental
+    (mails + calendario + clima) sin que el timing sea exacto.
+  </div>
+
+  <h2 style="font-size: 22px; margin-top: 36px;">Activar la skill recién creada</h2>
+  <p>Cuando el agente termina de armar todos los archivos:</p>
+  <ol class="tight">
+    <li>
+      Mandá <code class="inline">/new</code> en el TUI.
+      Eso reinicia la sesión y obliga a OpenClaw a re-escanear
+      <code class="inline">workspace/skills/</code>.
+    </li>
+    <li>
+      Verificá que la skill aparece:
+<pre><code>openclaw skills list</code><button class="copy">Copiar</button></pre>
+    </li>
+    <li>
+      Probala manualmente:
+<pre><code>/skill podcast-drill https://open.spotify.com/episode/&lt;tu-episodio&gt;</code><button class="copy">Copiar</button></pre>
+    </li>
+  </ol>
+
+  <div class="warn">
+    <strong>Por qué esto es <em>context engineering</em></strong>
+    Lo que hiciste no fue solo «escribir código»: diseñaste un sistema donde el agente sabe dónde
+    leer (<code class="inline">_registry.json</code>), qué leer (transcript + resumen + qbank),
+    cuándo despertar (cron a las 9 AM) y cómo conversar (retrieval practice, no respuestas).
+    Cada uno de esos archivos es contexto que se inyecta en el modelo en el momento justo.
+    <strong>El agente no «sabe» de podcasts — sabe leer estructuras que vos diseñaste.</strong>
+  </div>
+
+  <div class="section-marker" id="sec-mas-alla">
+    <div class="smarker-num">Sección 06 · Cierre</div>
+    <h2 class="smarker-title">Más allá de local</h2>
+    <p class="smarker-desc">Caminos para llevar tu agente fuera de tu PC y qué viene después en la clase.</p>
+  </div>
+
+  <h2 id="servidor" style="font-size: 22px; margin-top: 28px;">Deploy en un servidor</h2>
   <p>
     Correr OpenClaw en tu PC tiene un costo: si la apagás, el asistente deja de responder. Para uso 24/7
     se suele migrar a un servidor dedicado. Eso queda <em>fuera del alcance</em> de esta clase, pero la
@@ -970,6 +2189,10 @@ gog calendar events primary --from 2026-05-09T00:00:00Z --to 2026-05-16T00:00:00
     <li><a href="https://clawhub.ai/steipete/gog" target="_blank" rel="noopener">clawhub.ai/steipete/gog</a> — la skill <code class="inline">gog</code> (Google Workspace).</li>
     <li><a href="https://docs.openclaw.ai/concepts/agent-workspace" target="_blank" rel="noopener">docs.openclaw.ai/concepts/agent-workspace</a> — estructura del workspace y archivos.</li>
     <li><a href="https://docs.openclaw.ai/concepts/soul" target="_blank" rel="noopener">docs.openclaw.ai/concepts/soul</a> — el archivo SOUL.md.</li>
+    <li><a href="https://docs.openclaw.ai/tools/creating-skills" target="_blank" rel="noopener">docs.openclaw.ai/tools/creating-skills</a> — cómo crear una skill propia.</li>
+    <li><a href="https://docs.openclaw.ai/tools/slash-commands" target="_blank" rel="noopener">docs.openclaw.ai/tools/slash-commands</a> — referencia completa de slash commands.</li>
+    <li><a href="https://docs.openclaw.ai/tools/thinking" target="_blank" rel="noopener">docs.openclaw.ai/tools/thinking</a> — niveles de thinking.</li>
+    <li><a href="https://docs.openclaw.ai/automation/cron-jobs" target="_blank" rel="noopener">docs.openclaw.ai/automation/cron-jobs</a> — scheduled tasks (cron).</li>
     <li><a href="https://openrouter.ai/deepseek/deepseek-v4-pro" target="_blank" rel="noopener">openrouter.ai/deepseek/deepseek-v4-pro</a> — modelo DeepSeek V4 Pro.</li>
     <li><a href="https://openrouter.ai/google/gemma-4-31b-it" target="_blank" rel="noopener">openrouter.ai/google/gemma-4-31b-it</a> — modelo Gemma 4 31B.</li>
   </ul>
@@ -981,6 +2204,55 @@ gog calendar events primary --from 2026-05-09T00:00:00Z --to 2026-05-16T00:00:00
 </div>
 
 <script>
+  // Section nav: highlight active section while scrolling
+  const sectionMarkers = document.querySelectorAll('.section-marker');
+  const sectionPills = document.querySelectorAll('.section-pill');
+  if (sectionMarkers.length && 'IntersectionObserver' in window) {
+    const setActive = (id) => {
+      sectionPills.forEach(p => p.classList.toggle('active', p.dataset.section === id));
+    };
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries
+        .filter(e => e.isIntersecting)
+        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+      if (visible[0]) setActive(visible[0].target.id);
+    }, { rootMargin: '-110px 0px -55% 0px', threshold: 0 });
+    sectionMarkers.forEach(m => observer.observe(m));
+  }
+
+  // Smooth scroll for section nav
+  sectionPills.forEach(p => {
+    p.addEventListener('click', (e) => {
+      const href = p.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        const target = document.getElementById(href.slice(1));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          history.replaceState(null, '', href);
+        }
+      }
+    });
+  });
+
+  // File tabs (workspace files)
+  const ftabs = document.querySelectorAll('.ftab');
+  const fpanels = document.querySelectorAll('.ftab-panel');
+  ftabs.forEach(t => t.addEventListener('click', () => {
+    const id = t.dataset.ftab;
+    ftabs.forEach(x => x.classList.toggle('active', x === t));
+    fpanels.forEach(p => p.classList.toggle('active', p.dataset.fpanel === id));
+  }));
+
+  // File tree (podcast-drill skill)
+  const fnodes = document.querySelectorAll('.fnode');
+  const fnodePanels = document.querySelectorAll('.fnode-panel');
+  fnodes.forEach(n => n.addEventListener('click', () => {
+    const id = n.dataset.fnode;
+    fnodes.forEach(x => x.classList.toggle('active', x === n));
+    fnodePanels.forEach(p => p.classList.toggle('active', p.dataset.fpanel === id));
+  }));
+
   // OS tab switcher
   const tabs = document.querySelectorAll('.os-tab');
   const setOS = (os) => {
