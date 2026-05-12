@@ -898,9 +898,42 @@ npm rm -g openclaw</code><button class="copy">Copiar</button></pre>
     <div class="os-only mac">
       <p>En la <strong>Terminal</strong>:</p>
       <pre><code>curl -fsSL https://openclaw.ai/install.sh | bash</code><button class="copy">Copiar</button></pre>
+      <div class="warn">
+        <strong>Si falla con «EACCES» o «permission denied»</strong>
+        Quiere decir que tu Node está instalado en una ruta de sistema (típico del instalador oficial <code class="inline">.pkg</code>
+        desde nodejs.org, que deja el directorio global de npm en <code class="inline">/usr/local/lib/node_modules</code>,
+        propiedad de <code class="inline">root</code>). En ese caso, instalá el paquete con <code class="inline">sudo</code>:
+        <pre style="margin-top:8px"><code>sudo npm install -g openclaw@latest</code><button class="copy">Copiar</button></pre>
+        Si instalaste Node con <strong>Homebrew</strong>, <strong>nvm</strong>, <strong>fnm</strong> o <strong>volta</strong>,
+        el prefix vive en tu home y <em>no</em> hace falta <code class="inline">sudo</code>. Para chequear cuál es tu caso:
+        <pre style="margin-top:8px"><code>npm config get prefix</code><button class="copy">Copiar</button></pre>
+        Si devuelve algo bajo <code class="inline">/usr/local</code> → necesitás <code class="inline">sudo</code>.
+        Si devuelve algo bajo <code class="inline">/opt/homebrew</code>, <code class="inline">~/.nvm</code> o similar → no.
+        <p style="margin: 10px 0 0;">
+          <strong>Efecto colateral del <code class="inline">sudo</code>:</strong> si instalaste o arrancaste OpenClaw
+          como <code class="inline">root</code>, la carpeta <code class="inline">~/.openclaw</code> queda con dueño
+          <code class="inline">root</code> y después no vas a poder guardar API keys (ni ningún cambio de
+          configuración) desde tu usuario normal. El error típico es <em>permission denied</em> al setear keys.
+          Devolvé el dueño a tu usuario con:
+        </p>
+<pre style="margin-top:6px"><code>sudo chown -R $(whoami) ~/.openclaw</code><button class="copy">Copiar</button></pre>
+        <p class="muted" style="margin: 4px 0 0;">
+          <code class="inline">$(whoami)</code> se reemplaza solo por tu nombre de usuario. El <code class="inline">-R</code>
+          aplica el cambio a todo lo que hay adentro (workspace, credenciales, logs).
+        </p>
+      </div>
     </div>
     <div class="os-only win">
-      <p>En <strong>PowerShell</strong>:</p>
+      <p>
+        <strong>Antes de empezar</strong>: por defecto, PowerShell bloquea la ejecución de scripts.
+        Habilitá la política <em>RemoteSigned</em> solo para tu usuario (no requiere admin) corriendo esto una vez:
+      </p>
+      <pre><code>Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned</code><button class="copy">Copiar</button></pre>
+      <p class="muted" style="margin: 4px 0 12px;">
+        Si te pregunta confirmación, respondé <code class="inline">S</code> (Sí) o <code class="inline">Y</code>.
+        Sin esto, el instalador falla con un error de <em>execution of scripts is disabled</em>.
+      </p>
+      <p>Después, en <strong>PowerShell</strong>:</p>
       <pre><code>iwr -useb https://openclaw.ai/install.ps1 | iex</code><button class="copy">Copiar</button></pre>
       <div class="warn">
         <strong>Importante en Windows</strong>
@@ -983,6 +1016,15 @@ npm rm -g openclaw</code><button class="copy">Copiar</button></pre>
         <strong>Gateway service runtime</strong> → se instala como servicio del sistema
         (<em>LaunchAgent</em> en Mac, <em>Scheduled Task</em> en Windows). Eso significa que
         arranca solo cada vez que prendés la PC.
+        <p style="margin: 6px 0 0;">
+          Si el wizard <strong>no llegó a instalar el daemon</strong> (lo saltaste, falló, o querés reinstalarlo
+          después), corré este comando — es el que deja al gateway funcionando como servicio en background:
+        </p>
+<pre style="margin-top:6px"><code>openclaw onboard --install-daemon</code><button class="copy">Copiar</button></pre>
+        <p class="muted" style="margin: 4px 0 0;">
+          Sin el daemon, el agente no escucha mensajes cuando cerrás la terminal. Verificá después con
+          <code class="inline">openclaw gateway status</code>.
+        </p>
       </li>
       <li>
         <strong>How do you want to hatch your bot?</strong> → <code class="inline">Hatch in Terminal (recommended)</code>.
@@ -1053,6 +1095,71 @@ openclaw gateway status</code><button class="copy">Copiar</button></pre>
 <pre><code>openclaw models set openrouter/google/gemma-4-31b-it</code><button class="copy">Copiar</button></pre>
       <p class="muted">El formato siempre es <code class="inline">openrouter/&lt;proveedor&gt;/&lt;modelo&gt;</code>. Para que OpenRouter elija automático: <code class="inline">openrouter/auto</code>.</p>
     </details>
+
+    <div class="os-only mac">
+      <h3 style="margin-top: 22px;">Mac: darle permisos al agente para que sirva</h3>
+      <p>
+        En macOS, todo proceso que corre desde la terminal <strong>hereda los permisos de esa terminal</strong>.
+        Si nunca le diste acceso a la terminal a tus archivos, calendario o apps, tu agente va a quedar
+        encerrado: te va a responder, pero no va a poder leer un documento, escribir una nota ni abrir Calendar.
+        Es lo opuesto a lo que OpenClaw promete (un asistente que vive en <em>tu</em> máquina y trabaja con <em>tus</em> datos).
+      </p>
+      <p>
+        macOS arranca con todo cerrado por defecto. Para que el agente sea útil necesitás
+        <strong>abrirle puertas explícitamente</strong> desde:
+      </p>
+      <p style="margin: 0 0 6px;">
+        <strong>Ajustes del Sistema → Privacidad y seguridad</strong>
+      </p>
+      <p>
+        En cada categoría, agregá <em>la app de terminal desde la que corrés <code class="inline">openclaw</code></em>
+        (Terminal.app, iTerm, Warp, Ghostty, etc.). No la app «OpenClaw», porque OpenClaw no es una app gráfica:
+        corre como proceso dentro de tu terminal.
+      </p>
+      <ul class="tight">
+        <li>
+          <strong>Acceso completo al disco</strong> (<em>Full Disk Access</em>) — el más importante.
+          Permite leer y escribir en cualquier carpeta de tu home, incluyendo <code class="inline">~/Library/</code>
+          (Obsidian, Mail, Notes, Messages). Sin esto la mayoría de las skills no funcionan.
+        </li>
+        <li>
+          <strong>Archivos y carpetas</strong> → Documentos, Descargas, Escritorio.
+          Alternativa más restrictiva si no querés conceder Disco completo: dale acceso solo a las carpetas
+          donde realmente necesitás que trabaje.
+        </li>
+        <li>
+          <strong>Automatización</strong> → Calendar, Mail, Notes, Reminders, Contactos, etc.
+          Hace falta para que el agente pueda controlar esas apps vía AppleScript
+          (la primera vez que una skill lo intente, macOS muestra un pop-up; si lo cerraste sin permitir, se queda bloqueado acá).
+        </li>
+        <li>
+          <strong>Accesibilidad</strong> — solo si vas a usar skills que automatizan teclado/mouse (poco común).
+        </li>
+      </ul>
+      <div class="warn">
+        <strong>Después de dar cada permiso, cerrá y reabrí la terminal.</strong>
+        Los permisos de macOS no se aplican a procesos que ya estaban corriendo. Luego reiniciá el daemon
+        para que el gateway tome los nuevos permisos:
+        <pre style="margin-top:8px"><code>openclaw gateway restart</code><button class="copy">Copiar</button></pre>
+      </div>
+      <p>
+        <strong>Test rápido</strong> de que quedó bien: pedile al agente algo concreto que requiera permisos, por ejemplo
+        <em>«listá los archivos de mi Escritorio»</em> o <em>«¿qué tengo agendado mañana en Calendar?»</em>.
+      </p>
+      <ul class="tight">
+        <li>Si responde con la información → los permisos están dados.</li>
+        <li>
+          Si dice <code class="inline">permission denied</code>, <code class="inline">operation not permitted</code>
+          o <em>«el sistema bloqueó el acceso»</em> → falta un permiso. Volvé al paso anterior y agregá el que corresponda.
+        </li>
+      </ul>
+      <p class="muted">
+        Recordatorio de filosofía: cuanto más cerrada dejes la jaula, menos útil es el agente.
+        OpenClaw está pensado para correr en <em>tu</em> máquina personal, no en un servidor compartido —
+        los permisos los das vos y se quedan locales. No hay nadie del otro lado mirándolos.
+      </p>
+    </div>
+
     <label class="step-check"><input type="checkbox" /> Los tres comandos respondieron sin errores graves</label>
   </article>
 
